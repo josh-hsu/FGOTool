@@ -53,6 +53,16 @@
     <string name="electric_graphic_today">今天</string>
     <string name="electric_graphic_yesterday">昨天</string>
 
+    <!-- Outline -->
+    <string name="outline_kill_fgo">停止 FGO 遊戲</string>
+    <string name="outline_backup_fgo_account">備份 FGO 帳號</string>
+    <string name="outline_backup_fgo_title">備份 FGO 帳號</string>
+    <string name="outline_backup_fgo_msg">FGO 現在的帳號將會被備份成 account1。\n繼續嗎？</string>
+    <string name="outline_remove_fgo_account">移除 FGO 帳號(無法復原)</string>
+    <string name="outline_remove_fgo_title">移除 FGO 帳號</string>
+    <string name="outline_remove_fgo_msg">注意，這無法復原\n確定嗎？</string>
+    <string name="outline_refresh_fgo_info">重新整理資訊</string>
+
     <!-- Settings -->
     <string name="settings_fragment_title_1">帳號設定</string>
     <string name="settings_fragment_summary_1">連結您的 Google 或是 Dropbox 帳號以便保存資料至雲端。</string>

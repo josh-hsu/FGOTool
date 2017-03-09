@@ -45,7 +45,7 @@ public final class Log {
     private static void saveLogToFile(String tag, String msg, int level) {
         String log = logFormatted(tag, msg, level);
         try {
-            FileOutputStream fos = new FileOutputStream("/data/data/com.mumu.projectli/files/log.txt", true);
+            FileOutputStream fos = new FileOutputStream("/data/data/com.mumu.fgotool/files/log.txt", true);
             fos.write(log.getBytes());
             fos.close();
         } catch (Exception e) {

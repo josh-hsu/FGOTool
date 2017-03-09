@@ -24,9 +24,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kill FGO"
+                android:text="@string/outline_kill_fgo"
                 android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textAlignment="center"
                 android:layout_marginRight="20sp"
                 android:layout_marginLeft="20sp"
@@ -37,7 +37,7 @@
                 android:layout_alignParentStart="true" />
 
             <Button
-                android:text="Backup"
+                android:text="@string/outline_backup_fgo_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textViewElectricBarView"
@@ -46,13 +46,22 @@
                 android:layout_alignParentEnd="true" />
 
             <Button
-                android:text="Remove"
+                android:text="@string/outline_remove_fgo_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/button_backup_account"
                 android:id="@+id/button_remove_account"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true" />
+
+            <Button
+                android:text="@string/outline_refresh_fgo_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button_remove_account"
+                android:id="@+id/button_refresh"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,9 +71,23 @@
                 android:text="目前保存 0 個帳號"
                 android:id="@+id/textViewElectricityOutline"
                 android:textAlignment="center"
-                android:layout_below="@+id/button_remove_account"
+                android:layout_below="@+id/button_refresh"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="10dp"
+                android:text="目前 FGO 帳號是空的"
+                android:id="@+id/textViewFGOInfo"
+                android:textAlignment="center"
+                android:layout_below="@+id/textViewElectricityOutline"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true" />
+
+
 
         </RelativeLayout>
     </ScrollView>

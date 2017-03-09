@@ -137,8 +137,8 @@ public class ApplicationManager {
         method.invoke(pm, new Object[] {apkFile, observer, option, null});
     }
 
-    public void callJosh(String para1, String para2) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        josh_method.invoke(pm, new Object[] {para1, para2});
+    public int callJosh(String para1, String para2) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        return (int)josh_method.invoke(pm, new Object[] {para1, para2});
     }
 
 }

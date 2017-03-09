@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">FGO Tool</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_detail">Detail</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- project parameters -->
+    <string name="electric_data_file_name">electric_records.xml</string>
+
+    <!-- drawer -->
+    <string name="drawer_title">User Name</string>
+    <string name="drawer_subtitle">User Email</string>
+    <string name="drawer_outline">Outline Function</string>
+    <string name="drawer_electricity">Accounts</string>
+    <string name="drawer_menu_social">Social</string>
+    <string name="drawer_send">Send Mail to developer</string>
+    <string name="drawer_share">Share to ..</string>
+
+    <!-- home activity -->
+    <string name="bugreport_permission_request">We need permission to access external storage.</string>
+    <string name="bugreport_permission_not_grant">Your record is not sent to developer because you denied the permission request.</string>
+    <string name="bugreport_subject">Bugreport</string>
+    <string name="bugreport_send_out_via">Send out mail via ..</string>
+    <string name="bugreport_context">Briefly describe the bug you found or suggestions to this APP: \n</string>
+    
+    <!-- Electricity activity -->
+    <string name="electric_today">Today</string>
+    <string name="electric_last_record_time">Last Time</string>
+    <string name="electric_last_record">Last Record</string>
+    <string name="electric_current_record_time">Now</string>
+    <string name="electric_current_record">Record</string>
+
+    <string name="electric_history">History</string>
+    <string name="electric_button_add">Add Record</string>
+    <string name="electric_no_data">No data here, add one now</string>
+    <string name="electric_edit">Edit</string>
+    <string name="electric_delete">Delete</string>
+
+    <string name="electric_add">Add a record (Default is last record)</string>
+    <string name="electric_add_info">Please add a new record</string>
+    <string name="electric_add_next">Add new one to compare</string>
+    <string name="electric_add_field_holder">Current number</string>
+    <string name="electric_add_cancel">Cancel</string>
+
+    <string name="electric_graph_not_ready">Graph View is not ready\ntouch it to view all data</string>
+    <string name="electric_graphic_no_enough_data">Need at least 3 data to draw</string>
+    <string name="electric_graphic_no_detail">Sorry, no detail</string>
+    <string name="electric_graphic_touch_to_see_detail">Touch point to see detail</string>
+    <string name="electric_graphic_today">Today</string>
+    <string name="electric_graphic_yesterday">Yesterday</string>
+
+    <!-- Outline fragment -->
+    <string name="outline_money">Money</string>
+    <string name="outline_money_available">Available</string>
+    <string name="outline_money_status_rich">Rich</string>
+    <string name="outline_money_status_normal">Normal</string>
+    <string name="outline_money_status_eat_dust">Eat dust</string>
+    <string name="outline_electricity_used">Used</string>
+    <string name="outline_electricity_available">Available</string>
+
+    <!-- Settings -->
+    <string name="settings_fragment_title_1">Account Setting</string>
+    <string name="settings_fragment_summary_1">Link your Google account or Dropbox account to App</string>
+    <string name="settings_restore_data_from_sdcard">Restore Data from external Storage</string>
+    <string name="settings_restore_title">Restore Saved Data</string>
+    <string name="settings_restore_subtitle">Warning: restore recently backup data will erase all the data you add after last backup. Continue?</string>
+    <string name="settings_restore_failed">Restore Failed</string>
+    <string name="settings_restore_not_found">Sorry, no backup data found in your device.</string>
+    <string name="settings_restore_finished">Restore has finished successfully.</string>
+
+</resources>

@@ -6,16 +6,23 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.mumu.fgotool.records.ElectricityRecordHandler;
+import com.mumu.fgotool.records.ElectricityRecordParser;
 import com.mumu.fgotool.utility.Log;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.BufferUnderflowException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class OutlineFragment extends MainFragment {
     private static final String TAG = "ProjectLI";
@@ -25,10 +32,14 @@ public class OutlineFragment extends MainFragment {
     private String mParam2;
     private Context mContext;
 
+    // Data Holder
+    private ElectricityRecordHandler mRecordHandler;
+
     private Button mKillFGOButton;
     private Button mBackupAccountButton;
     private Button mRemoveAccountButton;
     private Button mInfoButton;
+    private TextView mAccountNumText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -99,45 +110,28 @@ public class OutlineFragment extends MainFragment {
     }
 
     @Override
-    public void onDetailClick() {
-        Log.d(TAG, "on detail click on outline");
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        prepareView(view);
+        prepareData();
+        updateView();
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onDetailClick() {
+        Log.d(TAG, "Detail click on electricity fragment");
+        showBottomSheet();
+    }
+
+    private void prepareView(View view) {
         mBackupAccountButton = (Button) view.findViewById(R.id.button_backup_account);
         mRemoveAccountButton = (Button) view.findViewById(R.id.button_remove_account);
         mInfoButton = (Button) view.findViewById(R.id.button_refresh);
+        mAccountNumText = (TextView) view.findViewById(R.id.textViewAccountNum);
 
         mBackupAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(mContext)
-                        .setTitle(R.string.outline_backup_fgo_title)
-                        .setMessage(R.string.outline_backup_fgo_msg)
-                        .setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    String thisAccount = "account2";
-                                    createNewAccountFolder(thisAccount);
-                                    new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "b:com.mumu.fgotool/files/" + thisAccount);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
+                showAddDialog();
             }
         });
 
@@ -170,30 +164,29 @@ public class OutlineFragment extends MainFragment {
         mInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(mContext)
-                        .setTitle(R.string.outline_backup_fgo_title)
-                        .setMessage(R.string.outline_backup_fgo_msg)
-                        .setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    String thisAccount = "account2";
-                                    createNewAccountFolder(thisAccount);
-                                    new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
+                showBottomSheet();
             }
         });
+    }
+
+    private void prepareData() {
+        mRecordHandler = new ElectricityRecordHandler(getActivity());
+    }
+
+    private void updateView() {
+        String accountNumText = getString(R.string.outline_account_num);
+        accountNumText = accountNumText + " " + mRecordHandler.getCount();
+        mAccountNumText.setText(accountNumText);
+    }
+
+    private void showBottomSheet() {
+        ElectricityBottomSheet ebs = new ElectricityBottomSheet();
+        ebs.setElectricityRecordHandler(mRecordHandler);
+        ebs.show(getFragmentManager(), ebs.getTag());
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(Uri uri);
     }
 
     void createNewAccountFolder(String folderName) {
@@ -217,5 +210,51 @@ public class OutlineFragment extends MainFragment {
             if (!folderPrefs.mkdirs())
                 Log.d(TAG, "folder " + baseFileName + "/shared_prefs create fail");
         }
+    }
+
+    /*
+     *  Add electricity
+     */
+    private void showAddDialog() {
+        new MaterialDialog.Builder(getContext())
+                .title(getString(R.string.electric_add))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(getString(R.string.electric_add_field_holder), mRecordHandler.getRecord(0), new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        Log.d(TAG, "Get input " + input);
+                        try {
+                            String nextSerial = mRecordHandler.getNextSerial();
+                            addNewRecordFromUser("account" + nextSerial, "NOW", input.toString());
+                            updateView();
+                            createNewAccountFolder("account" + nextSerial);
+                            new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "b:com.mumu.fgotool/files/" + "account" + nextSerial);
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                }).negativeText(getString(R.string.electric_add_cancel)).show();
+    }
+
+    private int addNewRecordFromUser(String record, String date, String title) {
+        String targetDate;
+
+        if (date.equals("NOW")) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+            targetDate = df.format(Calendar.getInstance().getTime());
+        } else {
+            targetDate = date;
+        }
+
+        try {
+            mRecordHandler.addRecord(new ElectricityRecordParser.Entry(mRecordHandler.getNextSerial(), targetDate, record, title));
+            mRecordHandler.refreshFromFile();
+            return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "Fail to add record " + e.getMessage());
+        }
+
+        return -1;
     }
 }

@@ -36,7 +36,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ElectricityFragment.OnFragmentInteractionListener,
         OutlineFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "ProjectLI";
@@ -128,10 +127,6 @@ public class MainActivity extends AppCompatActivity
             fragment = mFragmentList.get(FRAG_IDX_OUTLINE);
             if (actionBar != null) actionBar.setTitle(getString(R.string.drawer_outline));
             mFab.setVisibility(View.INVISIBLE);
-        } else if (id == R.id.nav_electricity) {
-            fragment = mFragmentList.get(FRAG_IDX_ELECTRICITY);
-            if (actionBar != null) actionBar.setTitle(getString(R.string.drawer_electricity));
-            mFab.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_share) {
             fragment = null;
             showSnackBarMessage("Share function implementing");
@@ -192,7 +187,6 @@ public class MainActivity extends AppCompatActivity
         mFragmentList = new ArrayList<>();
         try {
             mFragmentList.add(FRAG_IDX_OUTLINE, OutlineFragment.class.newInstance());
-            mFragmentList.add(FRAG_IDX_ELECTRICITY, ElectricityFragment.class.newInstance());
         } catch (Exception e) {
             Log.e(TAG, "init fragment list failed: " + e.getMessage());
             e.printStackTrace();

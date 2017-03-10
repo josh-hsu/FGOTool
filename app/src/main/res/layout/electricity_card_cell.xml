@@ -23,7 +23,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textViewElectricIncrease"
+                android:id="@+id/textViewSerial"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/bg_blue_circle"
@@ -40,15 +40,15 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="2988"
                 android:textSize="18sp"
-                android:id="@+id/tvTitle"
+                android:id="@+id/textViewAccountTitle"
                 android:textColor="@color/colorAccent"
                 android:paddingStart="6dp"
 
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/textViewElectricIncrease" />
+                android:layout_toEndOf="@+id/textViewSerial" />
 
             <TextView
-                android:id="@+id/tvSubTitle"
+                android:id="@+id/textViewDateTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|fill_horizontal"
@@ -58,7 +58,7 @@
                 android:textColor="#EC407A"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/tvTitle"
+                android:layout_toEndOf="@+id/textViewAccountTitle"
                 android:layout_alignParentStart="false"
                 android:textAlignment="viewEnd" />
 

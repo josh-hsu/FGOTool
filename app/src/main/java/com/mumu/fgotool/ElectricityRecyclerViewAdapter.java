@@ -1,5 +1,8 @@
 package com.mumu.fgotool;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +14,7 @@ import android.widget.Toast;
 
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 
-/**
- * Created by josh on 2016/7/24.
- */
-public class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRecyclerViewAdapter.ViewHolder>
+class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRecyclerViewAdapter.ViewHolder>
         implements View.OnClickListener {
 
     private static final String TAG = "ProjectLI";
@@ -48,16 +48,36 @@ public class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<Electri
     }
 
     @Override
-    public void onBindViewHolder(ElectricityRecyclerViewAdapter.ViewHolder holder, int position) {
-        int increment = mRecordHandler.getIncrement(position);
+    public void onBindViewHolder(ElectricityRecyclerViewAdapter.ViewHolder holder, final int position) {
+        int serialNum = mRecordHandler.getSerialNum(position);
 
-        holder.recordText.setText(mRecordHandler.getRecord(position));
+        holder.recordText.setText(mRecordHandler.getTitle(position));
         holder.dateText.setText(mRecordHandler.getDateFormatted(position));
 
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "Not ready", Toast.LENGTH_SHORT).show();
+                final Context sContext = view.getContext();
+                AlertDialog.Builder ad = new AlertDialog.Builder(sContext, R.style.MyDialogStyle)
+                        .setTitle(R.string.outline_restore_fgo_title)
+                        .setMessage(R.string.outline_restore_fgo_msg)
+                        .setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    String thisAccount = mRecordHandler.getRecord(position);
+                                    new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                ad.show();
             }
         });
 
@@ -68,10 +88,10 @@ public class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<Electri
             }
         });
 
-        if (increment == -1)
-            holder.incrementText.setText("+0");
+        if (serialNum == -1)
+            holder.incrementText.setText("1");
         else
-            holder.incrementText.setText("+"+increment);
+            holder.incrementText.setText(""+serialNum);
 
         if (position == expandedPosition) {
             holder.llExpandArea.setVisibility(View.VISIBLE);
@@ -112,9 +132,9 @@ public class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<Electri
         public ViewHolder(View itemView) {
             super(itemView);
 
-            recordText = (TextView) itemView.findViewById(R.id.tvTitle);
-            dateText = (TextView) itemView.findViewById(R.id.tvSubTitle);
-            incrementText = (TextView) itemView.findViewById(R.id.textViewElectricIncrease);
+            recordText = (TextView) itemView.findViewById(R.id.textViewAccountTitle);
+            dateText = (TextView) itemView.findViewById(R.id.textViewDateTitle);
+            incrementText = (TextView) itemView.findViewById(R.id.textViewSerial);
             llExpandArea = (LinearLayout) itemView.findViewById(R.id.llExpandArea);
             editButton = (Button) itemView.findViewById(R.id.btn_edit);
             deleteButton = (Button) itemView.findViewById(R.id.btn_delete);

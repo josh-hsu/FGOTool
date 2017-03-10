@@ -54,7 +54,7 @@ public class ElectricityRecordHandler {
         try {
             userDataStream = new FileInputStream(userDataPath);
         } catch (FileNotFoundException e) {
-            Log.d(TAG, "User file not found, create on from resource");
+            Log.d(TAG, "User file not found, create one from resource");
             userDataStream = copyDefaultRecordToUser(userDataPath);
         }
 
@@ -145,6 +145,13 @@ public class ElectricityRecordHandler {
             return null;
     }
 
+    public String getTitle(int idx) {
+        if (idx < getCount())
+            return get(getInverseIndex(idx)).title;
+        else
+            return null;
+    }
+
     public String getDateFormatted(int idx) {
         String rawDate = getDate(idx);
 
@@ -184,13 +191,14 @@ public class ElectricityRecordHandler {
         if (getCount() > 0) {
             return "" + (Integer.parseInt(get(getInverseIndex(0)).serial) + 1);
         } else {
+            Log.d(TAG, "No record found, next serial is 0");
             return "0";
         }
     }
 
-    public int getIncrement(int idx) {
-        if (idx < getCount() - 1)
-            return Integer.parseInt(getRecord(idx)) - Integer.parseInt(getRecord(idx+1));
+    public int getSerialNum(int idx) {
+        if (idx < getCount())
+            return idx + 1;
         else
             return -1;
     }
@@ -217,6 +225,9 @@ public class ElectricityRecordHandler {
         Element rec = document.createElement("record");
         rec.appendChild(document.createTextNode(record.record));
         subroot.appendChild(rec);
+        Element title = document.createElement("title");
+        title.appendChild(document.createTextNode(record.title));
+        subroot.appendChild(title);
 
         root.appendChild(subroot);
 

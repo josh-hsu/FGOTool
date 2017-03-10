@@ -52,15 +52,18 @@ public class ElectricityRecordParser {
         public final String serial;
         public final String date;
         public final String record;
+        public final String title;
 
-        public Entry(String s, String d, String r) {
+        public Entry(String s, String d, String r, String t) {
             this.serial = s;
             this.date = d;
             this.record = r;
+            this.title = t;
         }
 
         public String toString() {
             return "Serial=" + serial + ", " +
+                    "Title=" + title + ", " +
                     "Date=" + date + ", " +
                     "Record=" + record;
         }
@@ -73,6 +76,7 @@ public class ElectricityRecordParser {
         String serial = null;
         String date = null;
         String record = null;
+        String title = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -88,12 +92,15 @@ public class ElectricityRecordParser {
                 case "record":
                     record = readRecord(parser);
                     break;
+                case "title":
+                    title = readTitle(parser);
+                    break;
                 default:
                     skip(parser);
                     break;
             }
         }
-        return new Entry(serial, date, record);
+        return new Entry(serial, date, record, title);
     }
 
     private String readSerial(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -107,6 +114,13 @@ public class ElectricityRecordParser {
         parser.require(XmlPullParser.START_TAG, ns, "date");
         String date = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "date");
+        return date;
+    }
+
+    private String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "title");
+        String date = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "title");
         return date;
     }
 

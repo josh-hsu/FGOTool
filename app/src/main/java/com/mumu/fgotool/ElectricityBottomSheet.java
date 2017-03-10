@@ -19,10 +19,7 @@ import com.mumu.fgotool.records.ElectricityRecordHandler;
  */
 public class ElectricityBottomSheet extends BottomSheetDialogFragment {
 
-    private RecyclerView mEHRecycler;
-    private ElectricityRecyclerViewAdapter mEHAdapter;
-    private StaggeredGridLayoutManager mSGLM;
-    private static ElectricityRecordHandler mRecordHandler;
+    private ElectricityRecordHandler mRecordHandler;
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -48,12 +45,12 @@ public class ElectricityBottomSheet extends BottomSheetDialogFragment {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
 
-        mEHRecycler = (RecyclerView) contentView.findViewById(R.id.recyclerViewElectricityList);
-        mSGLM = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        RecyclerView mEHRecycler = (RecyclerView) contentView.findViewById(R.id.recyclerViewElectricityList);
+        StaggeredGridLayoutManager mSGLM = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mEHRecycler.setLayoutManager(mSGLM);
 
         //  Setup Adapter & DataSet //
-        mEHAdapter = new ElectricityRecyclerViewAdapter(mRecordHandler);
+        ElectricityRecyclerViewAdapter mEHAdapter = new ElectricityRecyclerViewAdapter(mRecordHandler);
         mEHRecycler.setAdapter(mEHAdapter);
 
         if (behavior != null && behavior instanceof BottomSheetBehavior) {

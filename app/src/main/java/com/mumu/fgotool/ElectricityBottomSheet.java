@@ -19,8 +19,6 @@ import com.mumu.fgotool.records.ElectricityRecordHandler;
  */
 public class ElectricityBottomSheet extends BottomSheetDialogFragment {
 
-    private ElectricityRecordHandler mRecordHandler;
-
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
         @Override
@@ -50,15 +48,11 @@ public class ElectricityBottomSheet extends BottomSheetDialogFragment {
         mEHRecycler.setLayoutManager(mSGLM);
 
         //  Setup Adapter & DataSet //
-        ElectricityRecyclerViewAdapter mEHAdapter = new ElectricityRecyclerViewAdapter(mRecordHandler);
+        ElectricityRecyclerViewAdapter mEHAdapter = new ElectricityRecyclerViewAdapter();
         mEHRecycler.setAdapter(mEHAdapter);
 
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
-    }
-
-    public void setElectricityRecordHandler(ElectricityRecordHandler handler) {
-        mRecordHandler = handler;
     }
 }

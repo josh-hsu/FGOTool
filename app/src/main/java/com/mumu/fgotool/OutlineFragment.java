@@ -170,7 +170,8 @@ public class OutlineFragment extends MainFragment {
     }
 
     private void prepareData() {
-        mRecordHandler = new ElectricityRecordHandler(getActivity());
+        mRecordHandler = ElectricityRecordHandler.getHandler();
+        mRecordHandler.initOnce(getActivity().getResources(), getActivity().getFilesDir().getAbsolutePath());
     }
 
     private void updateView() {
@@ -181,7 +182,6 @@ public class OutlineFragment extends MainFragment {
 
     private void showBottomSheet() {
         ElectricityBottomSheet ebs = new ElectricityBottomSheet();
-        ebs.setElectricityRecordHandler(mRecordHandler);
         ebs.show(getFragmentManager(), ebs.getTag());
     }
 
@@ -219,7 +219,7 @@ public class OutlineFragment extends MainFragment {
         new MaterialDialog.Builder(getContext())
                 .title(getString(R.string.electric_add))
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(getString(R.string.electric_add_field_holder), mRecordHandler.getRecord(0), new MaterialDialog.InputCallback() {
+                .input(getString(R.string.electric_add_field_holder), mRecordHandler.getTitle(0), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         Log.d(TAG, "Get input " + input);

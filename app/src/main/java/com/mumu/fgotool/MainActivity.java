@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
         try {
             mFragmentList.add(FRAG_IDX_OUTLINE, OutlineFragment.class.newInstance());
         } catch (Exception e) {
-            Log.e(TAG, "init fragment list failed: " + e.getMessage());
+            Log.e(TAG, "initOnce fragment list failed: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -34,7 +34,7 @@
     <string name="electric_add">給一個帳號名稱</string>
     <string name="electric_add_info">請輸入您現在的數值</string>
     <string name="electric_add_next">再新增一筆來比較</string>
-    <string name="electric_add_field_holder">現在讀數</string>
+    <string name="electric_add_field_holder">上個帳號名稱</string>
     <string name="electric_add_cancel">取消</string>
 
     <string name="electric_graphic_today">今天</string>

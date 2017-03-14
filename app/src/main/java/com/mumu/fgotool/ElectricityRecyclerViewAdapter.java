@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mumu.fgotool.records.ElectricityRecordHandler;
+import com.mumu.fgotool.utility.Log;
 
 class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRecyclerViewAdapter.ViewHolder>
         implements View.OnClickListener {
@@ -21,8 +22,11 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
     private int expandedPosition = -1;
     private ElectricityRecordHandler mRecordHandler;
 
-    public ElectricityRecyclerViewAdapter (ElectricityRecordHandler rh) {
-        this.mRecordHandler = rh;
+    ElectricityRecyclerViewAdapter () {
+        mRecordHandler = ElectricityRecordHandler.getHandler();
+
+        if (!mRecordHandler.getAvailable())
+            Log.e(TAG, "RecyclerView: record handler is not available");
     }
 
     @Override

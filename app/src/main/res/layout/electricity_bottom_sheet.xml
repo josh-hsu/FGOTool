@@ -16,7 +16,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:id="@+id/textViewBackgroundColorSheet"
-            android:background="#F23F43"
+            android:background="#303F9F"
             android:layout_alignParentTop="true"
             android:layout_alignBottom="@+id/imageViewTopHead"
             android:layout_alignParentEnd="true"

@@ -58,7 +58,7 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
         holder.recordText.setText(mRecordHandler.getTitle(position));
         holder.dateText.setText(mRecordHandler.getDateFormatted(position));
 
-        holder.editButton.setOnClickListener(new View.OnClickListener() {
+        holder.restoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Context sContext = view.getContext();
@@ -71,6 +71,33 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
                                 try {
                                     String thisAccount = mRecordHandler.getRecord(position);
                                     new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                ad.show();
+            }
+        });
+
+        holder.updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Context sContext = view.getContext();
+                AlertDialog.Builder ad = new AlertDialog.Builder(sContext, R.style.MyDialogStyle)
+                        .setTitle(R.string.outline_update_fgo_title)
+                        .setMessage(R.string.outline_update_fgo_msg)
+                        .setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    String thisAccount = mRecordHandler.getRecord(position);
+                                    new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "backupPref:com.mumu.fgotool/files/" + thisAccount);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -130,7 +157,7 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView recordText, dateText, incrementText;
-        Button editButton, deleteButton;
+        Button restoreButton, updateButton, deleteButton;
         LinearLayout llExpandArea;
 
         public ViewHolder(View itemView) {
@@ -140,7 +167,8 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
             dateText = (TextView) itemView.findViewById(R.id.textViewDateTitle);
             incrementText = (TextView) itemView.findViewById(R.id.textViewSerial);
             llExpandArea = (LinearLayout) itemView.findViewById(R.id.llExpandArea);
-            editButton = (Button) itemView.findViewById(R.id.btn_edit);
+            restoreButton = (Button) itemView.findViewById(R.id.btn_restore_account);
+            updateButton = (Button) itemView.findViewById(R.id.btn_update);
             deleteButton = (Button) itemView.findViewById(R.id.btn_delete);
         }
     }

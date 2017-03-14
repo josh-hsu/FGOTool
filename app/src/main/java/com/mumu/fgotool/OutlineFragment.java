@@ -145,7 +145,7 @@ public class OutlineFragment extends MainFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "d:account");
+                                    new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "delete:account");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -228,7 +228,7 @@ public class OutlineFragment extends MainFragment {
                             addNewRecordFromUser("account" + nextSerial, "NOW", input.toString());
                             updateView();
                             createNewAccountFolder("account" + nextSerial);
-                            new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "b:com.mumu.fgotool/files/" + "account" + nextSerial);
+                            new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "backupAll:com.mumu.fgotool/files/" + "account" + nextSerial);
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
                         }

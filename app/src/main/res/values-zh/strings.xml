@@ -29,7 +29,8 @@
 
     <!-- Electricity activity -->
     <string name="electric_edit">復原此帳號</string>
-    <string name="electric_delete">刪除此帳號</string>
+    <string name="electric_update">更新此帳號遊戲設定</string>
+    <string name="electric_delete">刪除此帳號(尚未開放)</string>
 
     <string name="electric_add">給一個帳號名稱</string>
     <string name="electric_add_info">請輸入您現在的數值</string>
@@ -51,13 +52,14 @@
     <string name="outline_refresh_fgo_info">列出所有帳號</string>
     <string name="outline_restore_fgo_title">恢復帳號</string>
     <string name="outline_restore_fgo_msg">恢復帳號將會覆蓋現在的帳號，這不能復原。\n繼續嗎？</string>
+    <string name="outline_update_fgo_title">更新帳號設定資訊</string>
+    <string name="outline_update_fgo_msg">這只會更新遊戲設定(例如戰鬥速度、音效等)，並不會影響帳號ID資訊\n繼續嗎？</string>
     <string name="outline_account_num">目前保存帳號數：</string>
 
-
     <!-- Settings -->
-    <string name="settings_fragment_title_1">帳號設定</string>
+    <string name="settings_fragment_title_1">遊戲備份設定</string>
     <string name="settings_fragment_summary_1">連結您的 Google 或是 Dropbox 帳號以便保存資料至雲端。</string>
-    <string name="settings_restore_data_from_sdcard">恢復資料\n(使用問題回報來備份)</string>
+    <string name="settings_restore_data_from_sdcard">恢復帳號表\n(使用問題回報來備份)</string>
     <string name="settings_restore_title">恢復上次備份</string>
     <string name="settings_restore_subtitle">注意！您即將恢復上次備份資料，從上個備份至今你輸入的資料將會遺失。確定嗎？</string>
     <string name="settings_restore_failed">備份失敗</string>

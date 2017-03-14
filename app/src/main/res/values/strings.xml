@@ -31,6 +31,7 @@
     
     <!-- Electricity activity -->
     <string name="electric_edit">Restore Account</string>
+    <string name="electric_update">Update Account</string>
     <string name="electric_delete">Delete Account</string>
 
     <string name="electric_add">Give an account name</string>
@@ -53,6 +54,8 @@
     <string name="outline_refresh_fgo_info">List all accounts</string>
     <string name="outline_restore_fgo_title">Restore FGO Account</string>
     <string name="outline_restore_fgo_msg">Restore account will replace the current account.\n Continue?</string>
+    <string name="outline_update_fgo_title">Update FGO Account</string>
+    <string name="outline_update_fgo_msg">Update account will only update the preference in game, not affect any account ID data.\n Continue?</string>
     <string name="outline_account_num">Current number of accounts: </string>
 
 

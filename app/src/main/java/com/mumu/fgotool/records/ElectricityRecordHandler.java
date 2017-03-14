@@ -1,6 +1,6 @@
 package com.mumu.fgotool.records;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.mumu.fgotool.R;
 import com.mumu.fgotool.utility.Log;
@@ -38,18 +38,38 @@ import javax.xml.transform.stream.StreamResult;
 public class ElectricityRecordHandler {
     private final static String TAG = "ProjectLI";
     private List<ElectricityRecordParser.Entry> mHistoryList;
-    private Context mContext;
     private String mDataDirectory;
+    private Resources mResources;
+    private static ElectricityRecordHandler mHandler;
+    private static boolean mHandlerInitialized = false;
 
-    public ElectricityRecordHandler(Context context) {
-        mContext = context;
-        mDataDirectory = context.getFilesDir().getAbsolutePath();
-        init();
+    private ElectricityRecordHandler() {
+        // show only be called in inner class
+    }
+
+    public static ElectricityRecordHandler getHandler() {
+        if (mHandler == null) {
+            mHandler = new ElectricityRecordHandler();
+        }
+
+        return mHandler;
+    }
+
+    public boolean getAvailable() {
+        return mHandlerInitialized;
+    }
+
+    public void initOnce(Resources res, String dataDirPath) {
+        if (!mHandlerInitialized) {
+            mDataDirectory = dataDirPath;
+            mResources = res;
+            init();
+        }
     }
 
     private void init() {
         InputStream userDataStream;
-        String userDataPath = mDataDirectory + "/" +mContext.getString(R.string.electric_data_file_name);
+        String userDataPath = mDataDirectory + "/" + mResources.getString(R.string.electric_data_file_name);
 
         try {
             userDataStream = new FileInputStream(userDataPath);
@@ -69,10 +89,12 @@ public class ElectricityRecordHandler {
         for (ElectricityRecordParser.Entry entry: mHistoryList) {
             Log.d(TAG, "  " + entry.toString());
         }
+
+        mHandlerInitialized = true;
     }
 
     private InputStream copyDefaultRecordToUser(String path) {
-        InputStream in = mContext.getResources().openRawResource(R.raw.electricity_sample);
+        InputStream in = mResources.openRawResource(R.raw.electricity_sample);
         OutputStream out = null;
 
         try {
@@ -156,7 +178,7 @@ public class ElectricityRecordHandler {
         String rawDate = getDate(idx);
 
         try {
-            Date df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(rawDate);
+            Date df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US).parse(rawDate);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(df);
             Calendar today = Calendar.getInstance();
@@ -166,9 +188,9 @@ public class ElectricityRecordHandler {
             DateFormat defaultFormatter = new SimpleDateFormat("yyyy/MM/dd a hh:mm", Locale.getDefault());
 
             if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
-                return mContext.getString(R.string.electric_graphic_today) + " " + timeFormatter.format(df);
+                return mResources.getString(R.string.electric_graphic_today) + " " + timeFormatter.format(df);
             } else if (calendar.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR)) {
-                return mContext.getString(R.string.electric_graphic_yesterday) + " " + timeFormatter.format(df);
+                return mResources.getString(R.string.electric_graphic_yesterday) + " " + timeFormatter.format(df);
             } else {
                 return defaultFormatter.format(df);
             }
@@ -205,7 +227,7 @@ public class ElectricityRecordHandler {
 
     // Record operation
     public boolean addRecord (ElectricityRecordParser.Entry record) throws Exception {
-        String userDataPath = mDataDirectory + "/" + mContext.getString(R.string.electric_data_file_name);
+        String userDataPath = mDataDirectory + "/" + mResources.getString(R.string.electric_data_file_name);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(new File(userDataPath));
@@ -250,19 +272,4 @@ public class ElectricityRecordHandler {
         return false;
     }
 
-    public int getMaxRecord() {
-        return 0;
-    }
-
-    public int getAvailable() {
-        return 0;
-    }
-
-    public int getRestOfDaysThisMonth() {
-        return 0;
-    }
-
-    public int getUsedThisMonth() {
-        return 0;
-    }
 }

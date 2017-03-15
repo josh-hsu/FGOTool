@@ -22,6 +22,7 @@ class ElectricityRecyclerViewAdapter
     private static final String TAG = "ProjectLI";
     private int expandedPosition = -1;
     private ElectricityRecordHandler mRecordHandler;
+    private static int mLastRestoreAccountIndex = -1;
 
     ElectricityRecyclerViewAdapter () {
         mRecordHandler = ElectricityRecordHandler.getHandler();
@@ -73,6 +74,7 @@ class ElectricityRecyclerViewAdapter
                                 try {
                                     String thisAccount = mRecordHandler.getRecord(position);
                                     new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
+                                    mLastRestoreAccountIndex = position;
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -91,25 +93,41 @@ class ElectricityRecyclerViewAdapter
             @Override
             public void onClick(View view) {
                 final Context sContext = view.getContext();
-                AlertDialog.Builder ad = new AlertDialog.Builder(sContext, R.style.MyDialogStyle)
-                        .setTitle(R.string.outline_update_fgo_title)
-                        .setMessage(R.string.outline_update_fgo_msg)
-                        .setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    String thisAccount = mRecordHandler.getRecord(position);
-                                    new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "backupPref:com.mumu.fgotool/files/" + thisAccount);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                AlertDialog.Builder ad = new AlertDialog.Builder(sContext, R.style.MyDialogStyle);
+                if (mLastRestoreAccountIndex == position) {
+                    ad.setTitle(R.string.outline_update_fgo_title);
+                    ad.setMessage(R.string.outline_update_fgo_msg);
+                    ad.setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                String thisAccount = mRecordHandler.getRecord(position);
+                                new ApplicationManager(sContext).callJosh("com.aniplex.fategrandorder", "backupPref:com.mumu.fgotool/files/" + thisAccount);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        })
-                        .setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
+                        }
+                    });
+                } else {
+                    String warningText;
+                    if (mLastRestoreAccountIndex == -1) {
+                        warningText = ad.getContext().getString(R.string.outline_update_fgo_msg_forbid3) +
+                                ad.getContext().getString(R.string.outline_update_fgo_msg_forbid2);
+                    } else {
+                        warningText = ad.getContext().getString(R.string.outline_update_fgo_msg_forbid1) +
+                                mRecordHandler.getTitle(mLastRestoreAccountIndex) +
+                                ad.getContext().getString(R.string.outline_update_fgo_msg_forbid2) +
+                                mRecordHandler.getTitle(position);
+                    }
+
+                    ad.setTitle(R.string.outline_update_fgo_title);
+                    ad.setMessage(warningText);
+                }
+                ad.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
                 ad.show();
             }
         });

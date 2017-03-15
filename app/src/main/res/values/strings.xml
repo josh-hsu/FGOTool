@@ -57,6 +57,9 @@
     <string name="outline_restore_fgo_msg">Restore account will replace the current account.\n Continue?</string>
     <string name="outline_update_fgo_title">Update FGO Account</string>
     <string name="outline_update_fgo_msg">Update account will only update the preference in game, not affect any account ID data.\n Continue?</string>
+    <string name="outline_update_fgo_msg_forbid1">Sorry, last restore might be </string>
+    <string name="outline_update_fgo_msg_forbid2">, so we cannot backup it for </string>
+    <string name="outline_update_fgo_msg_forbid3">Sorry, you haven\'t restore any account yet</string>
     <string name="outline_account_num">Current number of accounts: </string>
 
 

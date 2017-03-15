@@ -55,6 +55,9 @@
     <string name="outline_restore_fgo_msg">恢復帳號將會覆蓋現在的帳號，這不能復原。\n繼續嗎？</string>
     <string name="outline_update_fgo_title">更新帳號設定資訊</string>
     <string name="outline_update_fgo_msg">這只會更新遊戲設定(例如戰鬥速度、音效等)，並不會影響帳號ID資訊\n繼續嗎？</string>
+    <string name="outline_update_fgo_msg_forbid1">很抱歉，您上一次套用的帳號是 </string>
+    <string name="outline_update_fgo_msg_forbid2"> ，保險起見，我們不能為以下帳號備份設定\n</string>
+    <string name="outline_update_fgo_msg_forbid3">很抱歉，您尚未復原任何帳號</string>
     <string name="outline_account_num">目前保存帳號數：</string>
 
     <!-- Settings -->

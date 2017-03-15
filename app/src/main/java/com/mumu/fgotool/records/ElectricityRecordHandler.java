@@ -42,6 +42,7 @@ public class ElectricityRecordHandler {
     private Resources mResources;
     private static ElectricityRecordHandler mHandler;
     private static boolean mHandlerInitialized = false;
+    private static boolean mShouldInverseRecord = true;
 
     private ElectricityRecordHandler() {
         // show only be called in inner class
@@ -57,6 +58,14 @@ public class ElectricityRecordHandler {
 
     public boolean getAvailable() {
         return mHandlerInitialized;
+    }
+
+    public boolean getIsRecordInverse() {
+        return mShouldInverseRecord;
+    }
+
+    public void setRecordInverse(boolean inverse) {
+        mShouldInverseRecord = inverse;
     }
 
     public void initOnce(Resources res, String dataDirPath) {
@@ -149,8 +158,11 @@ public class ElectricityRecordHandler {
         return mHistoryList.size();
     }
 
-    public int getInverseIndex(int idx) {
-        return getCount() - idx - 1;
+    private int getInverseIndex(int idx) {
+        if (mShouldInverseRecord)
+            return getCount() - idx - 1;
+        else
+            return idx;
     }
 
     public String getRecord(int idx) {

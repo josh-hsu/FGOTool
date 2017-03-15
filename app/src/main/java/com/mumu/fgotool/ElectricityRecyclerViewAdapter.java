@@ -15,7 +15,8 @@ import android.widget.Toast;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.utility.Log;
 
-class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRecyclerViewAdapter.ViewHolder>
+class ElectricityRecyclerViewAdapter
+        extends RecyclerView.Adapter<ElectricityRecyclerViewAdapter.ViewHolder>
         implements View.OnClickListener {
 
     private static final String TAG = "ProjectLI";
@@ -52,11 +53,12 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
     }
 
     @Override
-    public void onBindViewHolder(ElectricityRecyclerViewAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(ElectricityRecyclerViewAdapter.ViewHolder holder, int pos) {
+        final int position = holder.getAdapterPosition();
         int serialNum = mRecordHandler.getSerialNum(position);
 
         holder.recordText.setText(mRecordHandler.getTitle(position));
-        holder.dateText.setText(mRecordHandler.getDateFormatted(position));
+        //holder.dateText.setText(mRecordHandler.getDateFormatted(position));
 
         holder.restoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +136,6 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
     @Override
     public void onClick(View view) {
         ViewHolder holder = (ViewHolder) view.getTag();
-        String theString = mRecordHandler.getRecord(holder.getPosition());
         int prev;
 
         // Check for an expanded view, collapse if you find one
@@ -144,11 +145,12 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
         }
 
         // Set the current position to "expanded"
-        if (expandedPosition == holder.getPosition())
+        if (expandedPosition == holder.getAdapterPosition())
             expandedPosition = -1;
         else
-            expandedPosition = holder.getPosition();
-        notifyItemChanged(holder.getPosition());
+            expandedPosition = holder.getAdapterPosition();
+
+        notifyItemChanged(holder.getAdapterPosition());
     }
 
     /**
@@ -156,7 +158,7 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
      * and data element structure
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView recordText, dateText, incrementText;
+        TextView recordText/*, dateText*/, incrementText;
         Button restoreButton, updateButton, deleteButton;
         LinearLayout llExpandArea;
 
@@ -164,7 +166,7 @@ class ElectricityRecyclerViewAdapter extends RecyclerView.Adapter<ElectricityRec
             super(itemView);
 
             recordText = (TextView) itemView.findViewById(R.id.textViewAccountTitle);
-            dateText = (TextView) itemView.findViewById(R.id.textViewDateTitle);
+            //dateText = (TextView) itemView.findViewById(R.id.textViewDateTitle);
             incrementText = (TextView) itemView.findViewById(R.id.textViewSerial);
             llExpandArea = (LinearLayout) itemView.findViewById(R.id.llExpandArea);
             restoreButton = (Button) itemView.findViewById(R.id.btn_restore_account);

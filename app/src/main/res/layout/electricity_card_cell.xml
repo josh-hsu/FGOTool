@@ -46,7 +46,7 @@
 
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/textViewSerial" />
-
+            <!--
             <TextView
                 android:id="@+id/textViewDateTitle"
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/textViewAccountTitle"
-                android:textAlignment="viewEnd" />
+                android:textAlignment="viewEnd" /> -->
 
             <ImageView
                 android:layout_width="wrap_content"

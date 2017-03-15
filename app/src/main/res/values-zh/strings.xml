@@ -40,6 +40,7 @@
 
     <string name="electric_graphic_today">今天</string>
     <string name="electric_graphic_yesterday">昨天</string>
+    <string name="electric_sheet_button_assistant">反向列出資料</string>
 
     <!-- Outline -->
     <string name="outline_kill_fgo">停止 FGO 遊戲</string>

@@ -40,5 +40,15 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp"/>
 
+        <Button
+            android:text="@string/electric_sheet_button_assistant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/recyclerViewElectricityList"
+            android:layout_marginBottom="13dp"
+            android:id="@+id/buttonSheetAssistant"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/imageViewTopHead" />
+
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

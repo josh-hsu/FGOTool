@@ -42,6 +42,7 @@
 
     <string name="electric_graphic_today">Today</string>
     <string name="electric_graphic_yesterday">Yesterday</string>
+    <string name="electric_sheet_button_assistant">Inverse the table</string>
 
     <!-- Outline fragment -->
     <string name="outline_kill_fgo">Kill FGO Process</string>

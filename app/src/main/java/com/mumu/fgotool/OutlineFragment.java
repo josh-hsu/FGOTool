@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.records.ElectricityRecordParser;
 import com.mumu.fgotool.utility.Log;
+import com.mumu.libjoshgame.Cmd;
 import com.mumu.libjoshgame.JoshGameLibrary;
 import com.mumu.libjoshgame.ScreenPoint;
 
@@ -209,10 +210,21 @@ public class OutlineFragment extends MainFragment {
         public void run() {
             JoshGameLibrary gl = JoshGameLibrary.getInstance();
             ScreenPoint sp = new ScreenPoint(0, 0, 0, 0, 882, 178, ScreenPoint.SO_Portrait);
+            ScreenPoint sp2 = new ScreenPoint(0, 0, 0, 0, 112, 178, ScreenPoint.SO_Portrait);
+
+            Cmd.RunCommand("am force-stop com.aniplex.fategrandorder");
 
             gl.SetGameOrientation(ScreenPoint.SO_Portrait);
             gl.getCapSvc().DumpScreenPNG("/data/data/com.mumu.fgotool/files/test.dump");
             gl.getInputSvc().TapOnScreen(sp.coord);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gl.getInputSvc().TapOnScreen(sp2.coord);
+
+            Cmd.RunCommand("am start \"com.aniplex.fategrandorder/jp.delightworks.Fgo.player.AndroidPlugin\"");
         }
     }
 

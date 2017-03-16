@@ -18,10 +18,10 @@ package com.mumu.libjoshgame;
 
 import com.mumu.fgotool.PrivatePackageManager;
 
-class Cmd {
+public class Cmd {
     private static PrivatePackageManager mPPM = PrivatePackageManager.getInstance();
 
-    static String RunCommand(String cmd) {
+    public static String RunCommand(String cmd) {
         try {
             mPPM.runCmd(cmd);
         } catch (Exception e)  {

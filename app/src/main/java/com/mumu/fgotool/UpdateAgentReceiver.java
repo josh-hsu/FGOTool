@@ -70,7 +70,7 @@ public class UpdateAgentReceiver extends BroadcastReceiver {
                 if (intentContent != null) {
                     if (installOption == -1) {
                         Log.d(TAG, "Install package with no option, set it default INSTALL_REPLACE_EXISTING");
-                        installPackageOnPath(context, intentContent, ApplicationManager.INSTALL_REPLACE_EXISTING);
+                        installPackageOnPath(context, intentContent, PrivatePackageManager.INSTALL_REPLACE_EXISTING);
                     } else {
                         installPackageOnPath(context, intentContent, installOption);
                     }
@@ -110,11 +110,12 @@ public class UpdateAgentReceiver extends BroadcastReceiver {
 
     private int installPackageOnPath(final Context context, String path, int option) {
         try {
-            final ApplicationManager am = new ApplicationManager(context);
+            final PrivatePackageManager am = PrivatePackageManager.getInstance();
+            am.init(context.getPackageManager());
             am.setOnInstalledPackaged(new OnInstalledPackaged() {
                 public void packageInstalled(String packageName, int returnCode) {
                     mReturnCode = returnCode;
-                    if (returnCode == ApplicationManager.INSTALL_SUCCEEDED) {
+                    if (returnCode == PrivatePackageManager.INSTALL_SUCCEEDED) {
                         Log.d(TAG, "Install succeeded");
                     } else {
                         Log.d(TAG, "Install failed: " + returnCode);
@@ -224,13 +225,13 @@ public class UpdateAgentReceiver extends BroadcastReceiver {
                     File f2 = new File(signedApkPath);
                     if(f.exists() && !f.isDirectory()) {
                         Log.d(TAG, "APK found in " + apkPath + ", installing ...");
-                        installPackageOnPath(mContext, apkPath, ApplicationManager.INSTALL_REPLACE_EXISTING);
+                        installPackageOnPath(mContext, apkPath, PrivatePackageManager.INSTALL_REPLACE_EXISTING);
                         shouldDaemonRunning = false;
                     }
 
                     if(f2.exists() && !f2.isDirectory()) {
                         Log.d(TAG, "APK found in " + signedApkPath + ", installing ...");
-                        installPackageOnPath(mContext, signedApkPath, ApplicationManager.INSTALL_REPLACE_EXISTING);
+                        installPackageOnPath(mContext, signedApkPath, PrivatePackageManager.INSTALL_REPLACE_EXISTING);
                         shouldDaemonRunning = false;
                     }
                 }
@@ -261,7 +262,7 @@ public class UpdateAgentReceiver extends BroadcastReceiver {
                 Log.d(TAG, "Looking for FileName:" + f.getName());
                 if (f.getName().contains("apk")) {
                     Log.d(TAG, "Matched APK file, installing");
-                    installPackageOnPath(mContext, f.getAbsolutePath(), ApplicationManager.INSTALL_REPLACE_EXISTING);
+                    installPackageOnPath(mContext, f.getAbsolutePath(), PrivatePackageManager.INSTALL_REPLACE_EXISTING);
                 }
             }
 

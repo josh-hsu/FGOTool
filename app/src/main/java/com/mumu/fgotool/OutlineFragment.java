@@ -17,12 +17,16 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.records.ElectricityRecordParser;
 import com.mumu.fgotool.utility.Log;
+import com.mumu.libjoshgame.JoshGameLibrary;
+import com.mumu.libjoshgame.ScreenPoint;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import static com.mumu.libjoshgame.ScreenPoint.SO_Portrait;
 
 public class OutlineFragment extends MainFragment {
     private static final String TAG = "ProjectLI";
@@ -34,11 +38,13 @@ public class OutlineFragment extends MainFragment {
 
     // Data Holder
     private ElectricityRecordHandler mRecordHandler;
+    private PrivatePackageManager mPPM;
 
     private Button mKillFGOButton;
     private Button mBackupAccountButton;
     private Button mRemoveAccountButton;
     private Button mInfoButton;
+    private Button mRunJoshCmdButton;
     private TextView mAccountNumText;
 
     private OnFragmentInteractionListener mListener;
@@ -69,6 +75,8 @@ public class OutlineFragment extends MainFragment {
         super.onCreate(savedInstanceState);
 
         mContext = getContext();
+        mPPM = PrivatePackageManager.getInstance();
+        mPPM.init(mContext.getPackageManager());
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -126,6 +134,7 @@ public class OutlineFragment extends MainFragment {
         mBackupAccountButton = (Button) view.findViewById(R.id.button_backup_account);
         mRemoveAccountButton = (Button) view.findViewById(R.id.button_remove_account);
         mInfoButton = (Button) view.findViewById(R.id.button_refresh);
+        mRunJoshCmdButton = (Button) view.findViewById(R.id.button_test_game);
         mAccountNumText = (TextView) view.findViewById(R.id.textViewAccountNum);
 
         mBackupAccountButton.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +154,7 @@ public class OutlineFragment extends MainFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "delete:account");
+                                    mPPM.moveData("com.aniplex.fategrandorder", "delete:account");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -167,6 +176,13 @@ public class OutlineFragment extends MainFragment {
                 showBottomSheet();
             }
         });
+
+        mRunJoshCmdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                testJoshGame();
+            }
+        });
     }
 
     private void prepareData() {
@@ -183,6 +199,21 @@ public class OutlineFragment extends MainFragment {
     private void showBottomSheet() {
         ElectricityBottomSheet ebs = new ElectricityBottomSheet();
         ebs.show(getFragmentManager(), ebs.getTag());
+    }
+
+    private void testJoshGame() {
+        new TT().start();
+    }
+
+    class TT extends Thread {
+        public void run() {
+            JoshGameLibrary gl = JoshGameLibrary.getInstance();
+            ScreenPoint sp = new ScreenPoint(0, 0, 0, 0, 882, 178, ScreenPoint.SO_Portrait);
+
+            gl.SetGameOrientation(ScreenPoint.SO_Portrait);
+            gl.getCapSvc().DumpScreenPNG("/data/data/com.mumu.fgotool/files/test.dump");
+            gl.getInputSvc().TapOnScreen(sp.coord);
+        }
     }
 
     public interface OnFragmentInteractionListener {
@@ -228,7 +259,7 @@ public class OutlineFragment extends MainFragment {
                             addNewRecordFromUser("account" + nextSerial, "NOW", input.toString());
                             updateView();
                             createNewAccountFolder("account" + nextSerial);
-                            new ApplicationManager(mContext).callJosh("com.aniplex.fategrandorder", "backupAll:com.mumu.fgotool/files/" + "account" + nextSerial);
+                            mPPM.moveData("com.aniplex.fategrandorder", "backupAll:com.mumu.fgotool/files/" + "account" + nextSerial);
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
                         }

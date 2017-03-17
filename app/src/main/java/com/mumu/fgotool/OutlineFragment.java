@@ -86,6 +86,7 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
         mPPM = PrivatePackageManager.getInstance();
         mPPM.init(mContext.getPackageManager());
         mFGOJobs = FGOJobHandler.getHandler();
+        mFGOJobs.setJobEventListener(FGOJobHandler.AUTO_TRAVERSE_JOB, this);
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);

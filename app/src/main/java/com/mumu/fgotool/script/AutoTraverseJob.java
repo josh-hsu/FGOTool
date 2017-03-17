@@ -95,7 +95,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
             thisAccount = mAccountHandler.getRecord(mCurrentIndex);
 
         Log.d(TAG, "Now restoring account record: " + thisAccount);
-        sendMessage(""+mCurrentIndex);
+        sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount());
         mPPM.moveData("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
         mCurrentIndex++;
         return 0;

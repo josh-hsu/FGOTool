@@ -64,7 +64,7 @@
                 android:layout_alignParentStart="true" />
 
             <Button
-                android:text="Test Josh Game"
+                android:text="@string/outline_start_auto_traverse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/button_refresh"

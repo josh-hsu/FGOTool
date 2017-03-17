@@ -59,6 +59,10 @@
     <string name="outline_update_fgo_msg_forbid2"> ，保險起見，我們不能為以下帳號備份設定\n</string>
     <string name="outline_update_fgo_msg_forbid3">很抱歉，您尚未復原任何帳號</string>
     <string name="outline_account_num">目前保存帳號數：</string>
+    <string name="outline_start_auto_traverse">開始自動登入帳號</string>
+    <string name="outline_stop_auto_traverse">停止自動登入帳號</string>
+    <string name="outline_current_progress">登入進度(按此停止): </string>
+    <string name="outline_current_finish">已完成第 </string>
 
     <!-- Settings -->
     <string name="settings_fragment_title_1">遊戲備份設定</string>

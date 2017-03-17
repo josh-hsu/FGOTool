@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -16,10 +17,9 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.records.ElectricityRecordParser;
+import com.mumu.fgotool.script.FGOJobHandler;
+import com.mumu.fgotool.script.JobEventListener;
 import com.mumu.fgotool.utility.Log;
-import com.mumu.libjoshgame.Cmd;
-import com.mumu.libjoshgame.JoshGameLibrary;
-import com.mumu.libjoshgame.ScreenPoint;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -27,15 +27,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import static com.mumu.libjoshgame.ScreenPoint.SO_Portrait;
-
-public class OutlineFragment extends MainFragment {
+public class OutlineFragment extends MainFragment implements JobEventListener{
     private static final String TAG = "ProjectLI";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
     private Context mContext;
+    private static boolean mFGOFlag = false;
+    private FGOJobHandler mFGOJobs;
 
     // Data Holder
     private ElectricityRecordHandler mRecordHandler;
@@ -49,6 +49,13 @@ public class OutlineFragment extends MainFragment {
     private TextView mAccountNumText;
 
     private OnFragmentInteractionListener mListener;
+    private String mUpdatedString;
+    private final Handler mHandler = new Handler();
+    final Runnable mUpdateRunnable = new Runnable() {
+        public void run() {
+            updateView();
+        }
+    };
 
     public OutlineFragment() {
         // Required empty public constructor
@@ -78,6 +85,7 @@ public class OutlineFragment extends MainFragment {
         mContext = getContext();
         mPPM = PrivatePackageManager.getInstance();
         mPPM.init(mContext.getPackageManager());
+        mFGOJobs = FGOJobHandler.getHandler();
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -181,7 +189,7 @@ public class OutlineFragment extends MainFragment {
         mRunJoshCmdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                testJoshGame();
+                runAutoLoginRoutine();
             }
         });
     }
@@ -191,10 +199,21 @@ public class OutlineFragment extends MainFragment {
         mRecordHandler.initOnce(getActivity().getResources(), getActivity().getFilesDir().getAbsolutePath());
     }
 
+    /*
+     * updateView will be called when mUpdateRunnable is triggered
+     */
     private void updateView() {
         String accountNumText = getString(R.string.outline_account_num);
+        String currentProgressText = getString(R.string.outline_current_progress);
         accountNumText = accountNumText + " " + mRecordHandler.getCount();
+        currentProgressText = currentProgressText + " " + mUpdatedString;
+
         mAccountNumText.setText(accountNumText);
+
+        if (mFGOFlag)
+            mRunJoshCmdButton.setText(currentProgressText);
+        else
+            mRunJoshCmdButton.setText(R.string.outline_start_auto_traverse);
     }
 
     private void showBottomSheet() {
@@ -202,30 +221,24 @@ public class OutlineFragment extends MainFragment {
         ebs.show(getFragmentManager(), ebs.getTag());
     }
 
-    private void testJoshGame() {
-        new TT().start();
+    private void runAutoLoginRoutine() {
+        if (!mFGOFlag) {
+            mFGOJobs.setExtra(FGOJobHandler.AUTO_TRAVERSE_JOB, ElectricityRecordHandler.getHandler());
+            mFGOJobs.startJob(FGOJobHandler.AUTO_TRAVERSE_JOB);
+            mRunJoshCmdButton.setText(R.string.outline_stop_auto_traverse);
+        } else {
+            mFGOJobs.stopJob(FGOJobHandler.AUTO_TRAVERSE_JOB);
+            mRunJoshCmdButton.setText(R.string.outline_start_auto_traverse);
+        }
+
+        mFGOFlag = !mFGOFlag;
     }
 
-    class TT extends Thread {
-        public void run() {
-            JoshGameLibrary gl = JoshGameLibrary.getInstance();
-            ScreenPoint sp = new ScreenPoint(0, 0, 0, 0, 882, 178, ScreenPoint.SO_Portrait);
-            ScreenPoint sp2 = new ScreenPoint(0, 0, 0, 0, 112, 178, ScreenPoint.SO_Portrait);
-
-            Cmd.RunCommand("am force-stop com.aniplex.fategrandorder");
-
-            gl.SetGameOrientation(ScreenPoint.SO_Portrait);
-            gl.getCapSvc().DumpScreenPNG("/data/data/com.mumu.fgotool/files/test.dump");
-            gl.getInputSvc().TapOnScreen(sp.coord);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            gl.getInputSvc().TapOnScreen(sp2.coord);
-
-            Cmd.RunCommand("am start \"com.aniplex.fategrandorder/jp.delightworks.Fgo.player.AndroidPlugin\"");
-        }
+    @Override
+    public void onEventReceived(String msg, Object extra) {
+        Log.d(TAG, "Message Received " + msg);
+        mUpdatedString = msg;
+        mHandler.post(mUpdateRunnable);
     }
 
     public interface OnFragmentInteractionListener {

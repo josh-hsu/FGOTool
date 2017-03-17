@@ -61,7 +61,10 @@
     <string name="outline_update_fgo_msg_forbid2">, so we cannot backup it for </string>
     <string name="outline_update_fgo_msg_forbid3">Sorry, you haven\'t restore any account yet</string>
     <string name="outline_account_num">Current number of accounts: </string>
-
+    <string name="outline_start_auto_traverse">Start Auto Login Routine</string>
+    <string name="outline_stop_auto_traverse">Stop Auto Login Routine</string>
+    <string name="outline_current_progress">Auto Login: </string>
+    <string name="outline_current_finish">Finished: </string>
 
     <!-- Settings -->
     <string name="settings_fragment_title_1">Account Setting</string>

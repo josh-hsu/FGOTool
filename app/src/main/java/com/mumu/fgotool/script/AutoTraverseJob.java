@@ -86,19 +86,22 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         Cmd.RunCommand("am start \"com.aniplex.fategrandorder/jp.delightworks.Fgo.player.AndroidPlugin\"");
     }
 
-    private int changeNextAccount() throws Exception {
-        String thisAccount;
+    private void restoreCurrentAccount() throws Exception {
+        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex > 0) {
+            String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
+            Log.d(TAG, "Now restoring account record: " + thisAccount);
+            sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount());
+            mPPM.moveData("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
+        }
+    }
 
-        if (mCurrentIndex >= mAccountHandler.getCount())
-            return -1;
-        else
-            thisAccount = mAccountHandler.getRecord(mCurrentIndex);
-
-        Log.d(TAG, "Now restoring account record: " + thisAccount);
-        sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount());
-        mPPM.moveData("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
-        mCurrentIndex++;
-        return 0;
+    private void backupCurrentAccountPrefs() throws Exception {
+        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex > 0) {
+            String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
+            Log.d(TAG, "Now backup account prefs: " + thisAccount);
+            sendMessage("Now backing up prefs .. ");
+            mPPM.moveData("com.aniplex.fategrandorder", "backupPref:com.mumu.fgotool/files/" + thisAccount);
+        }
     }
 
     private class AutoTraverseRoutine extends Thread {
@@ -107,10 +110,10 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
 
         private void main() throws Exception {
             boolean shouldRunning = true;
+            stopFGO();
+
             while (shouldRunning) {
-                stopFGO();
-                sleep(1000);
-                shouldRunning = (changeNextAccount() == 0);
+                restoreCurrentAccount();
                 sleep(1000);
                 startFGO();
                 sleep(48000);
@@ -121,11 +124,18 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
                 sleep(500);
                 mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
-                sleep(500);
+                sleep(10000);
                 mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
                 sleep(7000);
                 mGL.getInputSvc().TapOnScreen(pointExitBulletin.coord);
                 sleep(2000);
+                backupCurrentAccountPrefs();
+                stopFGO();
+                sleep(1000);
+
+                mCurrentIndex++;
+                if (mCurrentIndex >= mAccountHandler.getCount())
+                    shouldRunning = false;
             }
         }
 

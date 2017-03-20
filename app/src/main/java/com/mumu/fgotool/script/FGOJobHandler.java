@@ -59,12 +59,12 @@ public class FGOJobHandler {
         }
     }
 
-    public static class FGOJob {
+    static class FGOJob {
         private String mJobName;
         private int mJobIndex;
         private boolean mShouldJobRunning;
 
-        public FGOJob(String name, int idx) {
+        FGOJob(String name, int idx) {
             mJobIndex = idx;
             mJobName = name;
             mShouldJobRunning = false;

@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         showOutlineFragment();
+
+        requestPermissionsOnStart();
     }
 
     @Override
@@ -178,6 +180,14 @@ public class MainActivity extends AppCompatActivity
                     Log.w(TAG, "User didn't give us permission to send out bugreport");
                 }
                 break;
+            case 201:
+                writeAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (!writeAccepted) {
+                    Toast.makeText(this, getString(R.string.bugreport_permission_not_grant), Toast.LENGTH_LONG).show();
+                    Log.w(TAG, "User didn't give us permission to send out bugreport");
+                    requestPermissionsOnStart();
+                }
+                break;
             default:
                 Toast.makeText(this, "No handle permission grant", Toast.LENGTH_LONG).show();
         }
@@ -211,6 +221,16 @@ public class MainActivity extends AppCompatActivity
     private void requestPermissions() {
         String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
         int permsRequestCode = 200;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Log.d(TAG, "This is device software version above Marshmallow, requesting permission of external storage");
+            requestPermissions(perms, permsRequestCode);
+        }
+    }
+
+    private void requestPermissionsOnStart() {
+        String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+        int permsRequestCode = 201;
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             Log.d(TAG, "This is device software version above Marshmallow, requesting permission of external storage");

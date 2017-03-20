@@ -63,6 +63,7 @@
     <string name="outline_stop_auto_traverse">停止自動登入帳號</string>
     <string name="outline_current_progress">登入進度(按此停止): </string>
     <string name="outline_current_finish">已完成第 </string>
+    <string name="outline_start_screen_capture">啟用抓點抓色</string>
 
     <!-- Settings -->
     <string name="settings_fragment_title_1">遊戲備份設定</string>

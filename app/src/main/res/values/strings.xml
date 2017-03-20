@@ -65,6 +65,7 @@
     <string name="outline_stop_auto_traverse">Stop Auto Login Routine</string>
     <string name="outline_current_progress">Auto Login: </string>
     <string name="outline_current_finish">Finished: </string>
+    <string name="outline_start_screen_capture">Capture Screen Color</string>
 
     <!-- Settings -->
     <string name="settings_fragment_title_1">Account Setting</string>

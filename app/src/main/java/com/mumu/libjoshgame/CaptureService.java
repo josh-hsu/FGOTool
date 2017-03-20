@@ -69,9 +69,9 @@ public class CaptureService {
         int bpp = 4;
         byte[] colorInfo = new byte[4];
 
-        if (coord.orien == ScreenPoint.SO_Portrait)
+        if (coord.orientation == ScreenPoint.SO_Portrait)
             offset = (mScreenWidth * coord.y + coord.x) * bpp;
-        else if (coord.orien == ScreenPoint.SO_Landscape)
+        else if (coord.orientation == ScreenPoint.SO_Landscape)
             offset = (mScreenWidth * coord.x + (mScreenWidth - coord.y)) * bpp;
 
         try {

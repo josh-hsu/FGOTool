@@ -84,7 +84,7 @@ public class InputService {
 
     public int TapOnScreen(ScreenCoord coord1)
     {
-        if (mGameOrientation != coord1.orien)
+        if (mGameOrientation != coord1.orientation)
             TouchOnScreen(coord1.y, mScreenWidth - coord1.x, 0, 0, INPUT_TYPE_TAP);
         else
             TouchOnScreen(coord1.x, coord1.y, 0, 0, INPUT_TYPE_TAP);

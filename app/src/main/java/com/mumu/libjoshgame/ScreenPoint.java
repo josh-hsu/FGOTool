@@ -29,7 +29,8 @@ public class ScreenPoint {
     }
 
     public ScreenPoint() {
-
+        coord = new ScreenCoord(0,0,0);
+        color = new ScreenColor((byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00);
     }
 
     public String toString() {
@@ -68,12 +69,12 @@ public class ScreenPoint {
     public class ScreenCoord {
         public int x;
         public int y;
-        public int orien;
+        public int orientation;
 
         public ScreenCoord(int xx, int yy, int oo) {
             x = xx;
             y = yy;
-            orien = oo;
+            orientation = oo;
         }
 
         public String toString() {

@@ -3,6 +3,7 @@ package com.mumu.fgotool;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.records.ElectricityRecordParser;
+import com.mumu.fgotool.screencapture.PointSelectionActivity;
 import com.mumu.fgotool.script.FGOJobHandler;
 import com.mumu.fgotool.script.JobEventListener;
 import com.mumu.fgotool.utility.Log;
@@ -46,6 +48,7 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
     private Button mRemoveAccountButton;
     private Button mInfoButton;
     private Button mRunJoshCmdButton;
+    private Button mScreenCaptureButton;
     private TextView mAccountNumText;
 
     private OnFragmentInteractionListener mListener;
@@ -146,6 +149,7 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
         mInfoButton = (Button) view.findViewById(R.id.button_refresh);
         mRunJoshCmdButton = (Button) view.findViewById(R.id.button_test_game);
         mAccountNumText = (TextView) view.findViewById(R.id.textViewAccountNum);
+        mScreenCaptureButton = (Button) view.findViewById(R.id.button_screenshot);
 
         mBackupAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +195,15 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
             @Override
             public void onClick(View view) {
                 runAutoLoginRoutine();
+            }
+        });
+
+        mScreenCaptureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(getMainActivity(), PointSelectionActivity.class);
+                startActivity(intent);
             }
         });
     }

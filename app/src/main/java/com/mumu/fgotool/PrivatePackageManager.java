@@ -8,12 +8,11 @@ import android.content.pm.IPackageInstallObserver;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.widget.Toast;
 
 import com.mumu.fgotool.utility.Log;
 
 public class PrivatePackageManager {
-    private static final String TAG = "PrivatePackageManager";
+    private static final String TAG = "FGOTool";
 
     /* install options */
     static final int INSTALL_REPLACE_EXISTING = 0x00000002;
@@ -26,7 +25,6 @@ public class PrivatePackageManager {
 
     private Method mInstallPackageMethod;
     private Method mMoveDataMethod;
-    private Method mRunCmdMethod;
 
     private OnInstalledPackaged onInstalledPackaged;
 
@@ -62,7 +60,6 @@ public class PrivatePackageManager {
 
             Class<?>[] run_types = new Class[]{String.class, String.class};
             mMoveDataMethod = mPM.getClass().getMethod("moveApplicationData", run_types);
-            mRunCmdMethod = mPM.getClass().getMethod("joshCmd", run_types);
 
         } catch (Exception e) {
             Log.e(TAG, "Failed to acquire methods. " + e.getMessage());
@@ -70,6 +67,10 @@ public class PrivatePackageManager {
         }
 
         mInitialized = true;
+    }
+
+    public PackageManager getPM() {
+        return mPM;
     }
 
     public void setPackageManager(PackageManager pm) {
@@ -105,14 +106,6 @@ public class PrivatePackageManager {
             mMoveDataMethod.invoke(mPM, new Object[]{para1, para2});
         }
         return 0;
-    }
-
-    public void runCmd(String cmd) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        if (!mInitialized) {
-            Log.e(TAG, "PPM not initialized!!");
-        } else {
-            mRunCmdMethod.invoke(mPM, new Object[]{cmd, ""});
-        }
     }
 
 }

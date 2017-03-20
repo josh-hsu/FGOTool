@@ -20,7 +20,7 @@ import java.util.Locale;
  *  for ZB501KL
  */
 public class UpdateAgentReceiver extends BroadcastReceiver {
-    private static final String TAG = "UpdateAgent";
+    private static final String TAG = "FGOTool";
     private static final String ACTION_BOOT_COMP = "android.intent.action.BOOT_COMPLETED";
     private static final String ACTION_UPDATE = "com.asus.updateagent.UPDATE_PACKAGE";
     private static final String ACTION_UPDATE_RESULT = "com.asus.updateagent.UPDATE_PACKAGE_RESULT";

@@ -16,9 +16,27 @@
 
 package com.mumu.libjoshgame;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
+/*
+ * JoshGameLibrary (GL)
+ * This game control library require the following initial phase
+
+   JoshGameLibrary mGL;
+   mGL = JoshGameLibrary.getInstance();               //this make sure there will be only one instance
+   mGL.setContext(this);                              //this can also be setPackageManager
+   mGL.setGameOrientation(ScreenPoint.SO_Landscape);  //setting game orientation for point check
+   mGL.setScreenDimension(1080, 1920);                //setting the dimension of screen for point check
+
+ */
 public class JoshGameLibrary {
     private InputService mInputService;
     private CaptureService mCaptureService;
+    private static Cmd mCmd;
+    private static boolean mFullInitialized = false;
+
     private static JoshGameLibrary currentRuntime = new JoshGameLibrary();
 
     public static JoshGameLibrary getInstance() {
@@ -30,21 +48,52 @@ public class JoshGameLibrary {
         mInputService = new InputService(mCaptureService);
     }
 
-    public void SetScreenDimension(int w, int h) {
+    public void setContext(Context context) {
+        mCmd = new Cmd(context.getPackageManager());
+        mFullInitialized = true;
+    }
+
+    public void setPackageManager(PackageManager pm) {
+        mCmd = new Cmd(pm);
+        mFullInitialized = true;
+    }
+
+    public void setScreenDimension(int w, int h) {
         mCaptureService.SetScreenDimension(w, h);
         mInputService.SetScreenDimension(w, h);
     }
 
-    public void SetGameOrientation(int orientation) {
+    public void setGameOrientation(int orientation) {
         mInputService.SetGameOrientation(orientation);
     }
 
-    public CaptureService getCapSvc() {
+    public CaptureService getCaptureService() {
         return mCaptureService;
     }
 
-    public InputService getInputSvc() {
+    public InputService getInputService() {
         return mInputService;
+    }
+
+    public void runCommand(String cmd) {
+        if (mFullInitialized) {
+            mCmd.runCommand(cmd);
+        } else {
+            Log.d("JoshGameLibrary", "Command service is not initialized");
+        }
+    }
+
+    static class GLService {
+        /*
+         * this eases the pain of accessing Cmd for GLServices
+         */
+        void runCommand(String cmd) {
+            if (mFullInitialized) {
+                mCmd.runCommand(cmd);
+            } else {
+                Log.d("JoshGameLibrary", "Command service is not initialized");
+            }
+        }
     }
 
 }

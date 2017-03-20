@@ -22,7 +22,7 @@ import com.mumu.libjoshgame.ScreenPoint.*;
 
 import java.io.RandomAccessFile;
 
-public class CaptureService {
+public class CaptureService extends JoshGameLibrary.GLService {
     private final String TAG = "LibJG";
     private final String mInternalDumpFile = Environment.getExternalStorageDirectory().toString() + "/internal.dump";
     private int mScreenWidth = -1;
@@ -39,22 +39,22 @@ public class CaptureService {
     }
 
     public void DumpScreenPNG(String filename) {
-        Cmd.RunCommand("screencap -p " + filename);
-        //Cmd.RunCommand("chmod 664 "+ filename);
-        //Cmd.RunCommand("chown sdcard_rw:media_rw "+ filename);
+        super.runCommand("screencap -p " + filename);
+        //Cmd.runCommand("chmod 664 "+ filename);
+        //Cmd.runCommand("chown sdcard_rw:media_rw "+ filename);
     }
 
     public void DumpScreen(String filename)
     {
-        Cmd.RunCommand("screencap " + filename);
-        //Cmd.RunCommand("chmod 664 "+ filename);
-        //Cmd.RunCommand("chown sdcard_rw:media_rw "+ filename);
+        super.runCommand("screencap " + filename);
+        //Cmd.runCommand("chmod 664 "+ filename);
+        //Cmd.runCommand("chown sdcard_rw:media_rw "+ filename);
     }
 
     private void DumpScreen()
     {
-        Cmd.RunCommand("screencap " + mInternalDumpFile);
-        Cmd.RunCommand("chmod 666 " + mInternalDumpFile);
+        super.runCommand("screencap " + mInternalDumpFile);
+        super.runCommand("chmod 666 " + mInternalDumpFile);
     }
 
     private void GetColorOnDumpInternal(ScreenColor sc, ScreenCoord coord)

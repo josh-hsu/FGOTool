@@ -30,7 +30,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class OutlineFragment extends MainFragment implements JobEventListener{
-    private static final String TAG = "ProjectLI";
+    private static final String TAG = "FGOTool";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;

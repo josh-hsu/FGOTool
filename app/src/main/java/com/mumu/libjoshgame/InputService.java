@@ -21,7 +21,7 @@ import android.util.Log;
 import com.mumu.libjoshgame.ScreenPoint.*;
 
 
-public class InputService {
+public class InputService extends JoshGameLibrary.GLService {
     private static final String TAG = "LibJG";
     private static int mGameOrientation = ScreenPoint.SO_Landscape;
     private static int mScreenWidth = -1;
@@ -57,24 +57,24 @@ public class InputService {
     public int TouchOnScreen(int x, int y, int tx, int ty, int type) {
         switch (type) {
             case INPUT_TYPE_TAP:
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 break;
             case INPUT_TYPE_DOUBLE_TAP:
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 //usleep(100 * 1000);
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 break;
             case INPUT_TYPE_TRIPLE_TAP:
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 //usleep(100 * 1000);
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 //usleep(100 * 1000);
-                Cmd.RunCommand("input tap " + x + " " + y);
+                super.runCommand("input tap " + x + " " + y);
                 break;
             case INPUT_TYPE_CONT_TAPS:
                 break;
             case INPUT_TYPE_SWIPE:
-                Cmd.RunCommand("input swipe " + x + " " + y + " " + tx + " " + ty);
+                super.runCommand("input swipe " + x + " " + y + " " + tx + " " + ty);
                 break;
             default:
                 Log.e(TAG, "TouchOnScreen: type " + type + "is invalid.");
@@ -152,25 +152,25 @@ public class InputService {
         return 0;
     }
 
-    public static void ConfigTouchScreen(boolean enable) {
+    public void ConfigTouchScreen(boolean enable) {
         if (enable)
-            Cmd.RunCommand("echo 1 > /proc/touch-enable");
+            super.runCommand("echo 1 > /proc/touch-enable");
         else
-            Cmd.RunCommand("echo 0 > /proc/touch-enable");
+            super.runCommand("echo 0 > /proc/touch-enable");
     }
 
-    public static void ConfigGyroSensor(boolean enable) {
+    public void ConfigGyroSensor(boolean enable) {
         if (enable)
-            Cmd.RunCommand("echo 1 > /proc/sensor-enable");
+            super.runCommand("echo 1 > /proc/sensor-enable");
         else
-            Cmd.RunCommand("echo 0 > /proc/sensor-enable");
+            super.runCommand("echo 0 > /proc/sensor-enable");
     }
 
-    public static void SetBacklightLow() {
-        Cmd.RunCommand("echo 0 > /sys/class/leds/lcd-backlight/brightness");
+    public void SetBacklightLow() {
+        super.runCommand("echo 0 > /sys/class/leds/lcd-backlight/brightness");
     }
 
-    public static void SetBacklight(int bl) {
-        Cmd.RunCommand("echo " + bl + " > /sys/class/leds/lcd-backlight/brightness");
+    public void SetBacklight(int bl) {
+        super.runCommand("echo " + bl + " > /sys/class/leds/lcd-backlight/brightness");
     }
 }

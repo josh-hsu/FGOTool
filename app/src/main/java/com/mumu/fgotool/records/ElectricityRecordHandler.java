@@ -36,7 +36,7 @@ import javax.xml.transform.stream.StreamResult;
  * This class handle electricity data and file
  */
 public class ElectricityRecordHandler {
-    private final static String TAG = "ProjectLI";
+    private final static String TAG = "FGOTool";
     private List<ElectricityRecordParser.Entry> mHistoryList;
     private String mDataDirectory;
     private Resources mResources;

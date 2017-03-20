@@ -13,7 +13,7 @@ import com.mumu.fgotool.utility.Log;
  * functions to be implemented by its children
  */
 public class MainFragment extends Fragment {
-    final static String TAG = "ProjectLI";
+    final static String TAG = "FGOTool";
     protected FloatingActionButton mFab;
 
     public void onFabClick(View view){

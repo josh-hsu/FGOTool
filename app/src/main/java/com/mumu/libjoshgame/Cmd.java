@@ -16,17 +16,39 @@
 
 package com.mumu.libjoshgame;
 
-import com.mumu.fgotool.PrivatePackageManager;
+import android.content.pm.PackageManager;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Cmd {
-    private static PrivatePackageManager mPPM = PrivatePackageManager.getInstance();
+    private boolean mInitialized = false;
+    private PackageManager mPM;
+    private Method mRunCmdMethod;
 
-    public static String RunCommand(String cmd) {
+    Cmd(PackageManager pm) {
         try {
-            mPPM.runCmd(cmd);
+            Class<?>[] run_types = new Class[]{String.class, String.class};
+            mRunCmdMethod = pm.getClass().getMethod("joshCmd", run_types);
+            mPM = pm;
+            mInitialized = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String runCommand(String cmd) {
+        try {
+            runCmd(cmd);
         } catch (Exception e)  {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void runCmd(String cmd) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        if (mInitialized) {
+            mRunCmdMethod.invoke(mPM, cmd, "");
+        }
     }
 }

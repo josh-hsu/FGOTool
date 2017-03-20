@@ -24,9 +24,12 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     AutoTraverseJob (String jobName, int jobIndex) {
         super(jobName, jobIndex);
         mPPM = PrivatePackageManager.getInstance();
+
+        /* JoshGameLibrary basic initial */
         mGL = JoshGameLibrary.getInstance();
-        mGL.SetGameOrientation(ScreenPoint.SO_Landscape);
-        mGL.SetScreenDimension(1080, 1920);
+        mGL.setPackageManager(mPPM.getPM());
+        mGL.setGameOrientation(ScreenPoint.SO_Landscape);
+        mGL.setScreenDimension(1080, 1920);
     }
 
     @Override
@@ -79,11 +82,11 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     }
 
     private void stopFGO() {
-        Cmd.RunCommand("am force-stop com.aniplex.fategrandorder");
+        mGL.runCommand("am force-stop com.aniplex.fategrandorder");
     }
 
     private void startFGO() {
-        Cmd.RunCommand("am start \"com.aniplex.fategrandorder/jp.delightworks.Fgo.player.AndroidPlugin\"");
+        mGL.runCommand("am start \"com.aniplex.fategrandorder/jp.delightworks.Fgo.player.AndroidPlugin\"");
     }
 
     private void restoreCurrentAccount() throws Exception {
@@ -110,6 +113,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
 
         private void main() throws Exception {
             boolean shouldRunning = true;
+            mCurrentIndex = 0;
             stopFGO();
 
             while (shouldRunning) {
@@ -117,17 +121,17 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 sleep(1000);
                 startFGO();
                 sleep(48000);
-                mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
+                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
                 sleep(500);
-                mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
+                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
                 sleep(500);
-                mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
+                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
                 sleep(500);
-                mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
+                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
                 sleep(10000);
-                mGL.getInputSvc().TapOnScreen(pointScreenCenter.coord);
+                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
                 sleep(7000);
-                mGL.getInputSvc().TapOnScreen(pointExitBulletin.coord);
+                mGL.getInputService().TapOnScreen(pointExitBulletin.coord);
                 sleep(2000);
                 backupCurrentAccountPrefs();
                 stopFGO();

@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OutlineFragment.OnFragmentInteractionListener {
 
-    public static final String TAG = "ProjectLI";
+    public static final String TAG = "FGOTool";
     public static final int FRAG_IDX_OUTLINE = 0;
-    public static final int FRAG_IDX_ELECTRICITY = 1;
+    //public static final int FRAG_IDX_ELECTRICITY = 1;
 
     private FloatingActionButton mFab;
     private View mCoordinateLayoutView;

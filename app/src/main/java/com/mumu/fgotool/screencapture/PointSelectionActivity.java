@@ -105,8 +105,8 @@ public class PointSelectionActivity extends AppCompatActivity {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         mLibJG = JoshGameLibrary.getInstance();
-        mLibJG.getCapSvc().DumpScreenPNG(mPngFilePath);
-        mLibJG.getCapSvc().DumpScreen(mDumpFilePath);
+        mLibJG.getCaptureService().DumpScreenPNG(mPngFilePath);
+        mLibJG.getCaptureService().DumpScreen(mDumpFilePath);
 
         mImageView.setImageBitmap(BitmapFactory.decodeFile(mPngFilePath));
         mImageView.setOnTouchListener(mPointTouchListener);
@@ -119,7 +119,7 @@ public class PointSelectionActivity extends AppCompatActivity {
         display.getSize(size);
         mScreenSizeX = size.x;
         mScreenSizeY = size.y;
-        mLibJG.SetScreenDimension(mScreenSizeX, mScreenSizeY);
+        mLibJG.setScreenDimension(mScreenSizeX, mScreenSizeY);
 
         hide();
     }
@@ -226,7 +226,7 @@ public class PointSelectionActivity extends AppCompatActivity {
         kUserPoint.coord.orientation = ScreenPoint.SO_Portrait;
         kUserPoint.coord.x = x;
         kUserPoint.coord.y = y;
-        mLibJG.getCapSvc().GetColorOnDump(kUserPoint.color, mDumpFilePath, kUserPoint.coord);
+        mLibJG.getCaptureService().GetColorOnDump(kUserPoint.color, mDumpFilePath, kUserPoint.coord);
         kColorOnPoint = "0x" + Integer.toHexString(kUserPoint.color.r & 0xFF) + " "
                 + Integer.toHexString(kUserPoint.color.g & 0xFF) + " "
                 + Integer.toHexString(kUserPoint.color.b & 0xFF) + " "

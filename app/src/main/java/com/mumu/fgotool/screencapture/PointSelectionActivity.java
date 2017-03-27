@@ -105,8 +105,8 @@ public class PointSelectionActivity extends AppCompatActivity {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         mLibJG = JoshGameLibrary.getInstance();
-        mLibJG.getCaptureService().DumpScreenPNG(mPngFilePath);
-        mLibJG.getCaptureService().DumpScreen(mDumpFilePath);
+        mLibJG.getCaptureService().dumpScreenPNG(mPngFilePath);
+        mLibJG.getCaptureService().dumpScreen(mDumpFilePath);
 
         mImageView.setImageBitmap(BitmapFactory.decodeFile(mPngFilePath));
         mImageView.setOnTouchListener(mPointTouchListener);
@@ -226,7 +226,7 @@ public class PointSelectionActivity extends AppCompatActivity {
         kUserPoint.coord.orientation = ScreenPoint.SO_Portrait;
         kUserPoint.coord.x = x;
         kUserPoint.coord.y = y;
-        mLibJG.getCaptureService().GetColorOnDump(kUserPoint.color, mDumpFilePath, kUserPoint.coord);
+        mLibJG.getCaptureService().getColorOnDump(kUserPoint.color, mDumpFilePath, kUserPoint.coord);
         kColorOnPoint = "0x" + Integer.toHexString(kUserPoint.color.r & 0xFF) + " "
                 + Integer.toHexString(kUserPoint.color.g & 0xFF) + " "
                 + Integer.toHexString(kUserPoint.color.b & 0xFF) + " "

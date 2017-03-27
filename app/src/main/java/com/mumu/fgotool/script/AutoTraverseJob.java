@@ -5,6 +5,7 @@ import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.utility.Log;
 import com.mumu.libjoshgame.Cmd;
 import com.mumu.libjoshgame.JoshGameLibrary;
+import com.mumu.libjoshgame.ScreenCoord;
 import com.mumu.libjoshgame.ScreenPoint;
 
 /**
@@ -29,6 +30,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         mGL = JoshGameLibrary.getInstance();
         mGL.setPackageManager(mPPM.getPM());
         mGL.setGameOrientation(ScreenPoint.SO_Landscape);
+        mGL.setAmbiguousRange(0x0A);
         mGL.setScreenDimension(1080, 1920);
     }
 
@@ -93,7 +95,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex > 0) {
             String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
             Log.d(TAG, "Now restoring account record: " + thisAccount);
-            sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount());
+            sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount() + " :" + mAccountHandler.get(mCurrentIndex).title);
             mPPM.moveData("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
         }
     }
@@ -109,7 +111,11 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
 
     private class AutoTraverseRoutine extends Thread {
         ScreenPoint pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
-        ScreenPoint pointExitBulletin = new ScreenPoint(0,0,0,0,1871,37,ScreenPoint.SO_Landscape);
+        ScreenPoint pointExitBulletin = new ScreenPoint(0x3D,0x3D,0x3D,0xff,1020,1871,ScreenPoint.SO_Landscape);
+        ScreenPoint pointHomeGiftBox = new ScreenPoint(229,64,39,0xff,646,1013,ScreenPoint.SO_Landscape);
+        ScreenPoint pointHomeOSiRaSe = new ScreenPoint(0,0,4,0xff,219,78,ScreenPoint.SO_Landscape);
+        ScreenPoint pointHomeApAdd = new ScreenPoint(201,142,85,0xff,262,1049,ScreenPoint.SO_Landscape);
+        ScreenCoord pointCloseDialog = new ScreenCoord(238, 968, ScreenPoint.SO_Portrait);
 
         private void main() throws Exception {
             boolean shouldRunning = true;
@@ -121,18 +127,17 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 sleep(1000);
                 startFGO();
                 sleep(48000);
-                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
-                sleep(500);
-                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
-                sleep(500);
-                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
-                sleep(500);
-                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
-                sleep(10000);
-                mGL.getInputService().TapOnScreen(pointScreenCenter.coord);
-                sleep(7000);
-                mGL.getInputService().TapOnScreen(pointExitBulletin.coord);
-                sleep(2000);
+                while (!mGL.getCaptureService().colorIs(pointExitBulletin) ||
+                        !mGL.getCaptureService().colorIs(pointHomeApAdd)) {
+                    mGL.getInputService().tapOnScreen(pointScreenCenter.coord);
+                    sleep(2000);
+                }
+
+                mGL.getInputService().tapOnScreen(pointCloseDialog);
+                sleep(1000);
+                mGL.getInputService().tapOnScreen(pointCloseDialog);
+                sleep(1000);
+
                 backupCurrentAccountPrefs();
                 stopFGO();
                 sleep(1000);

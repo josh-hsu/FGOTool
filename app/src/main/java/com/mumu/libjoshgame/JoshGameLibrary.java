@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Josh Tool Project
+ * Copyright (C) 2017 The Josh Tool Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+/*
+ * Josh Game Library - Version 1.20
+ */
 /*
  * JoshGameLibrary (GL)
  * This game control library require the following initial phase
@@ -59,12 +62,17 @@ public class JoshGameLibrary {
     }
 
     public void setScreenDimension(int w, int h) {
-        mCaptureService.SetScreenDimension(w, h);
-        mInputService.SetScreenDimension(w, h);
+        mCaptureService.setScreenDimension(w, h);
+        mInputService.setScreenDimension(w, h);
     }
 
     public void setGameOrientation(int orientation) {
-        mInputService.SetGameOrientation(orientation);
+        mInputService.setGameOrientation(orientation);
+        mCaptureService.setScreenOrientation(orientation);
+    }
+
+    public void setAmbiguousRange(int range) {
+        mCaptureService.setAmbiguousRange(range);
     }
 
     public CaptureService getCaptureService() {

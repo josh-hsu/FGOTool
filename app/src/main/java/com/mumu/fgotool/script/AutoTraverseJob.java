@@ -92,7 +92,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     }
 
     private void restoreCurrentAccount() throws Exception {
-        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex > 0) {
+        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex >= 0) {
             String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
             Log.d(TAG, "Now restoring account record: " + thisAccount);
             sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount() + " :" + mAccountHandler.get(mCurrentIndex).title);
@@ -101,7 +101,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     }
 
     private void backupCurrentAccountPrefs() throws Exception {
-        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex > 0) {
+        if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex >= 0) {
             String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
             Log.d(TAG, "Now backup account prefs: " + thisAccount);
             sendMessage("Now backing up prefs .. ");
@@ -111,7 +111,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
 
     private class AutoTraverseRoutine extends Thread {
         ScreenPoint pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
-        ScreenPoint pointExitBulletin = new ScreenPoint(0x3D,0x3D,0x3D,0xff,1020,1871,ScreenPoint.SO_Landscape);
+        ScreenPoint pointExitBulletin = new ScreenPoint(0x3D,0x3D,0x3D,0xff,1020,1871,ScreenPoint.SO_Portrait);
         ScreenPoint pointHomeGiftBox = new ScreenPoint(229,64,39,0xff,646,1013,ScreenPoint.SO_Landscape);
         ScreenPoint pointHomeOSiRaSe = new ScreenPoint(0,0,4,0xff,219,78,ScreenPoint.SO_Landscape);
         ScreenPoint pointHomeApAdd = new ScreenPoint(201,142,85,0xff,262,1049,ScreenPoint.SO_Landscape);
@@ -126,13 +126,16 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 restoreCurrentAccount();
                 sleep(1000);
                 startFGO();
-                sleep(48000);
-                while (!mGL.getCaptureService().colorIs(pointExitBulletin) ||
+                sleep(40000);
+                while (!mGL.getCaptureService().colorIs(pointExitBulletin) &&
                         !mGL.getCaptureService().colorIs(pointHomeApAdd)) {
                     mGL.getInputService().tapOnScreen(pointScreenCenter.coord);
-                    sleep(2000);
+                    sleep(500);
                 }
 
+                sleep(500);
+                mGL.getInputService().tapOnScreen(pointExitBulletin.coord);
+                sleep(1000);
                 mGL.getInputService().tapOnScreen(pointCloseDialog);
                 sleep(1000);
                 mGL.getInputService().tapOnScreen(pointCloseDialog);

@@ -117,8 +117,21 @@ public class PointSelectionActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        mScreenSizeX = size.x;
-        mScreenSizeY = size.y;
+
+        if (size.x > size.y) {
+            mScreenSizeX = size.y;
+            if (size.x > 2000)
+                mScreenSizeY = 2160;
+            else
+                mScreenSizeY = size.x;
+        } else {
+            mScreenSizeX = size.x;
+            if (size.y > 2000)
+                mScreenSizeY = 2160;
+            else
+                mScreenSizeY = size.y;
+        }
+
         mLibJG.setScreenDimension(mScreenSizeX, mScreenSizeY);
 
         hide();

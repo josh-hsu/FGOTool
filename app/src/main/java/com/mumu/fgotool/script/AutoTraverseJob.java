@@ -3,7 +3,6 @@ package com.mumu.fgotool.script;
 import com.mumu.fgotool.PrivatePackageManager;
 import com.mumu.fgotool.records.ElectricityRecordHandler;
 import com.mumu.fgotool.utility.Log;
-import com.mumu.libjoshgame.Cmd;
 import com.mumu.libjoshgame.JoshGameLibrary;
 import com.mumu.libjoshgame.ScreenCoord;
 import com.mumu.libjoshgame.ScreenPoint;
@@ -12,7 +11,6 @@ import com.mumu.libjoshgame.ScreenPoint;
  * AutoTraverseJob
  * Traverse all accounts in list
  */
-
 class AutoTraverseJob extends FGOJobHandler.FGOJob {
     private static final String TAG = "AutoTraverseJob";
     private ElectricityRecordHandler mAccountHandler;
@@ -30,8 +28,10 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         mGL = JoshGameLibrary.getInstance();
         mGL.setPackageManager(mPPM.getPM());
         mGL.setGameOrientation(ScreenPoint.SO_Landscape);
-        mGL.setAmbiguousRange(0x0A);
-        mGL.setScreenDimension(1080, 1920);
+        mGL.setAmbiguousRange(new int[]{0x0A, 0x0A, 0x0A});
+
+        // FGO game specific point offset
+        // we don't use offset in this project
     }
 
     @Override
@@ -110,12 +110,19 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     }
 
     private class AutoTraverseRoutine extends Thread {
+        /* for 1080x1920
         ScreenPoint pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
         ScreenPoint pointExitBulletin = new ScreenPoint(0x3D,0x3D,0x3D,0xff,1020,1871,ScreenPoint.SO_Portrait);
         ScreenPoint pointHomeGiftBox = new ScreenPoint(229,64,39,0xff,646,1013,ScreenPoint.SO_Landscape);
         ScreenPoint pointHomeOSiRaSe = new ScreenPoint(0,0,4,0xff,219,78,ScreenPoint.SO_Landscape);
         ScreenPoint pointHomeApAdd = new ScreenPoint(201,142,85,0xff,262,1049,ScreenPoint.SO_Landscape);
         ScreenCoord pointCloseDialog = new ScreenCoord(238, 968, ScreenPoint.SO_Portrait);
+        */
+        /* for 1080x2160 */
+        ScreenPoint pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
+        ScreenPoint pointExitBulletin = new ScreenPoint(10,35,51,0xff,1879,75,ScreenPoint.SO_Landscape);
+        ScreenPoint pointHomeApAdd = new ScreenPoint(230,220,150,0xff,304,1033,ScreenPoint.SO_Landscape);
+        ScreenPoint pointCloseDialog = new ScreenPoint(0,0,0,0xff,647,833,ScreenPoint.SO_Landscape);
 
         private void main() throws Exception {
             boolean shouldRunning = true;
@@ -127,8 +134,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 sleep(1000);
                 startFGO();
                 sleep(40000);
-                while (!mGL.getCaptureService().colorIs(pointExitBulletin) &&
-                        !mGL.getCaptureService().colorIs(pointHomeApAdd)) {
+                while (!mGL.getCaptureService().colorIs(pointHomeApAdd) && !mGL.getCaptureService().colorIs(pointExitBulletin)) {
                     mGL.getInputService().tapOnScreen(pointScreenCenter.coord);
                     sleep(500);
                 }
@@ -136,9 +142,9 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 sleep(500);
                 mGL.getInputService().tapOnScreen(pointExitBulletin.coord);
                 sleep(1000);
-                mGL.getInputService().tapOnScreen(pointCloseDialog);
+                mGL.getInputService().tapOnScreen(pointCloseDialog.coord);
                 sleep(1000);
-                mGL.getInputService().tapOnScreen(pointCloseDialog);
+                mGL.getInputService().tapOnScreen(pointCloseDialog.coord);
                 sleep(1000);
 
                 backupCurrentAccountPrefs();

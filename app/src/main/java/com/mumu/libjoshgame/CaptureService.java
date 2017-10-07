@@ -23,20 +23,25 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 public class CaptureService extends JoshGameLibrary.GLService {
-    private final String TAG = "LibJG";
+    private final String TAG = "LibGame";
     private final String mInternalDumpFile = Environment.getExternalStorageDirectory().toString() + "/internal.dump";
     private final String mFindColorDumpFile = Environment.getExternalStorageDirectory().toString() + "/find_color.dump";
     private int mScreenWidth = -1;
     private int mScreenHeight = -1;
+    private int mScreenXOffset = 0;
+    private int mScreenYOffset = 0;
     private int mCurrentGameOrientation = ScreenPoint.SO_Portrait;
-    private int mAmbiguousRange = 0x05;
+    private int[] mAmbiguousRange = {0x05, 0x05, 0x06};
     private final int mMaxColorFinding = 10;
+    private boolean mChatty = true;
     
     CaptureService() {
         Log.d(TAG, "CaptureService has been created.");
     }
 
     void setScreenDimension(int w, int h) {
+        if (mChatty) Log.d(TAG, "Setting width = " + w + ", height = " + h);
+
         mScreenHeight = h;
         mScreenWidth = w;
     }
@@ -45,8 +50,23 @@ public class CaptureService extends JoshGameLibrary.GLService {
         mCurrentGameOrientation = o;
     }
 
-    void setAmbiguousRange(int range) {
+    /*
+     * setScreenOffset (added in 1.34)
+     * this function can be called by JoshGameLibrary only
+     * shift an amount of offset for every point input
+     * we will treat this as portrait orientation
+     */
+    void setScreenOffset(int xOffset, int yOffset) {
+        mScreenXOffset = xOffset;
+        mScreenYOffset = yOffset;
+    }
+
+    void setAmbiguousRange(int[] range) {
         mAmbiguousRange = range;
+    }
+
+    public void setChatty(boolean chatty) {
+        mChatty = chatty;
     }
 
     public void dumpScreenPNG(String filename) {
@@ -60,6 +80,42 @@ public class CaptureService extends JoshGameLibrary.GLService {
     private void dumpScreen() {
         super.runCommand("screencap " + mInternalDumpFile);
         super.runCommand("chmod 666 " + mInternalDumpFile);
+    }
+
+    /*
+     * calculateOffset
+     * This function calculate the offset of dump file for
+     * retrieving color of the specific point
+     */
+    private int calculateOffset(ScreenCoord coord) {
+        int offset = 0;
+        final int bpp = 4;
+
+        if (mChatty) {
+            if (coord.orientation == ScreenPoint.SO_Landscape)
+                Log.d(TAG, "Mapping (" + coord.x + ", " + coord.y +
+                    ") to ("  + (coord.x + mScreenYOffset) + ", " + (coord.y + mScreenXOffset) + ")");
+            else
+                Log.d(TAG, "Mapping (" + coord.x + ", " + coord.y +
+                        ") to ("  + (coord.x + mScreenXOffset) + ", " + (coord.y + mScreenYOffset) + ")");
+        }
+
+        //if Android version is 7.0 or higher, the dump orientation will obey the device status
+        if (mCurrentGameOrientation == ScreenPoint.SO_Portrait) {
+            if (coord.orientation == ScreenPoint.SO_Portrait) {
+                offset = (mScreenWidth * (coord.y + mScreenYOffset) + (coord.x + mScreenXOffset)) * bpp;
+            } else if (coord.orientation == ScreenPoint.SO_Landscape) {
+                offset = (mScreenWidth * (coord.x + mScreenYOffset) + (mScreenWidth - (coord.y + mScreenXOffset))) * bpp;
+            }
+        } else {
+            if (coord.orientation == ScreenPoint.SO_Portrait) {
+                offset = (mScreenHeight * (mScreenWidth - (coord.x + mScreenXOffset)) + (coord.y + mScreenYOffset)) * bpp;
+            } else if (coord.orientation == ScreenPoint.SO_Landscape) {
+                offset = (mScreenHeight * (coord.y + mScreenXOffset) + (coord.x + mScreenYOffset)) * bpp;
+            }
+        }
+
+        return offset;
     }
 
     /*
@@ -78,23 +134,10 @@ public class CaptureService extends JoshGameLibrary.GLService {
      */
     public void getColorOnDump(ScreenColor sc, String filename, ScreenCoord coord) {
         RandomAccessFile dumpFile;
-        int offset = 0;
-        int bpp = 4;
+        int offset;
         byte[] colorInfo = new byte[4];
 
-        //if Android version is 7.0 or higher, the dump orientation will be obeyed device
-        if (mCurrentGameOrientation == ScreenPoint.SO_Portrait) {
-            if (coord.orientation == ScreenPoint.SO_Portrait)
-                offset = (mScreenWidth * coord.y + coord.x) * bpp;
-            else if (coord.orientation == ScreenPoint.SO_Landscape)
-                offset = (mScreenWidth * coord.x + (mScreenWidth - coord.y)) * bpp;
-        } else {
-            if (coord.orientation == ScreenPoint.SO_Portrait) {
-                offset = (mScreenHeight * (mScreenWidth - coord.x) + coord.y) * bpp;
-            } else if (coord.orientation == ScreenPoint.SO_Landscape) {
-                offset = (mScreenHeight * coord.y + coord.x) * bpp;
-            }
-        }
+        offset = calculateOffset(coord);
 
         try {
             dumpFile = new RandomAccessFile(filename, "rw");
@@ -129,8 +172,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
     public void getColorsOnDump(ArrayList<ScreenColor> colors,
                                 String filename, ArrayList<ScreenCoord> coords) {
         RandomAccessFile dumpFile;
-        int offset = 0;
-        int bpp = 4;
+        int offset;
         byte[] colorInfo;
 
         try {
@@ -144,19 +186,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
             ScreenCoord coord = coords.get(i);
             ScreenColor color = colors.get(i);
 
-            //if Android version is 7.0 or higher, the dump orientation will be obeyed device
-            if (mCurrentGameOrientation == ScreenPoint.SO_Portrait) {
-                if (coord.orientation == ScreenPoint.SO_Portrait)
-                    offset = (mScreenWidth * coord.y + coord.x) * bpp;
-                else if (coord.orientation == ScreenPoint.SO_Landscape)
-                    offset = (mScreenWidth * coord.x + (mScreenWidth - coord.y)) * bpp;
-            } else {
-                if (coord.orientation == ScreenPoint.SO_Portrait) {
-                    offset = (mScreenHeight * (mScreenWidth - coord.x) + coord.y) * bpp;
-                } else if (coord.orientation == ScreenPoint.SO_Landscape) {
-                    offset = (mScreenHeight * coord.y + coord.x) * bpp;
-                }
-            }
+            offset = calculateOffset(coord);
 
             try {
                 colorInfo = new byte[4];
@@ -179,13 +209,12 @@ public class CaptureService extends JoshGameLibrary.GLService {
     }
 
     /*
-     * checkColorInList
+     * checkColorInList (added in 1.15)
      * this function requires file opened to improve performance
      * i.e., the file open/close should be handled outside
      */
     private boolean checkColorInList(RandomAccessFile dumpFileOpened, ArrayList<ScreenPoint> points) {
-        int offset = 0;
-        int bpp = 4;
+        int offset;
         byte[] colorInfo;
 
         for(int i = 0; i < points.size(); i++) {
@@ -193,19 +222,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
             ScreenCoord coord = point.coord;
             ScreenColor nowColor = new ScreenColor();
 
-            //if Android version is 7.0 or higher, the dump orientation will be obeyed device
-            if (mCurrentGameOrientation == ScreenPoint.SO_Portrait) {
-                if (coord.orientation == ScreenPoint.SO_Portrait)
-                    offset = (mScreenWidth * coord.y + coord.x) * bpp;
-                else if (point.coord.orientation == ScreenPoint.SO_Landscape)
-                    offset = (mScreenWidth * coord.x + (mScreenWidth - coord.y)) * bpp;
-            } else {
-                if (point.coord.orientation == ScreenPoint.SO_Portrait) {
-                    offset = (mScreenHeight * (mScreenWidth - coord.x) + coord.y) * bpp;
-                } else if (point.coord.orientation == ScreenPoint.SO_Landscape) {
-                    offset = (mScreenHeight * coord.y + coord.x) * bpp;
-                }
-            }
+            offset = calculateOffset(coord);
 
             try {
                 colorInfo = new byte[4];
@@ -228,12 +245,16 @@ public class CaptureService extends JoshGameLibrary.GLService {
     }
 
     /*
-     * findColorInRange (added in 1.20)
+     * checkColorIsInRegion (added in 1.20)
+     * Check if the colors set is in the range of src <=> dest
+     * This function doesn't return the position of color, it only checks
+     * its existence
+     *
      * src: Source ScreenCoord (must smaller than dest)
      * dest: Destination ScreenCoord
      * colors: ScreenColor array to be found
      */
-    public boolean findColorInRange(ScreenCoord src, ScreenCoord dest, ArrayList<ScreenColor> colors) {
+    public boolean checkColorIsInRegion(ScreenCoord src, ScreenCoord dest, ArrayList<ScreenColor> colors) {
         ArrayList<ScreenCoord> coordList = new ArrayList<>();
         ArrayList<ScreenColor> colorsReturned = new ArrayList<>();
         ArrayList<Boolean> checkList = new ArrayList<>();
@@ -243,7 +264,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
 
         // sanity check
         if (colors == null || src == null || dest == null) {
-            Log.w(TAG, "findColorInRange: colors cannot be null");
+            Log.w(TAG, "checkColorIsInRegion: colors cannot be null");
             return false;
         } else {
             orientation = src.orientation;
@@ -251,12 +272,12 @@ public class CaptureService extends JoshGameLibrary.GLService {
         }
 
         if (src.orientation != dest.orientation) {
-            Log.w(TAG, "findColorInRange: Src and Dest must in same orientation");
+            Log.w(TAG, "checkColorIsInRegion: Src and Dest must in same orientation");
             return false;
         }
 
         if (colorCount < 1 || colorCount > mMaxColorFinding) {
-            Log.w(TAG, "findColorInRange: colors size should be bigger than 0 and smaller than " +
+            Log.w(TAG, "checkColorIsInRegion: colors size should be bigger than 0 and smaller than " +
                     mMaxColorFinding);
             return false;
         }
@@ -287,7 +308,8 @@ public class CaptureService extends JoshGameLibrary.GLService {
             }
         }
 
-        Log.d(TAG, "FindColorInRange: now checking total " + coordList.size() + " points");
+        if (mChatty) Log.d(TAG, "FindColorInRange: now checking total " + coordList.size() + " points");
+
         dumpScreen(mFindColorDumpFile);
         getColorsOnDump(colorsReturned, mFindColorDumpFile, coordList);
         for(ScreenColor color : colorsReturned) {
@@ -313,7 +335,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
     }
 
     /*
-     * findColorSegment
+     * findColorSegment (added in 1.15)
      * colorPoints: segment of colors
      * start: start point
      * end: end point
@@ -418,7 +440,8 @@ public class CaptureService extends JoshGameLibrary.GLService {
     }
 
     /*
-     * findColorSegmentGlobal
+     * findColorSegmentGlobal (added in 1.20)
+     * WARNING: BUGGY
      *
      * colorPoints: segment of colors and coordination used to find in entire screen
      */
@@ -445,12 +468,12 @@ public class CaptureService extends JoshGameLibrary.GLService {
         // Use two points to decide search direction
         ScreenCoord start = colorPoints.get(0).coord;
         ScreenCoord end = colorPoints.get(colorPoints.size()-1).coord;
-        if(start.x == end.x) {
-            Log.d(TAG, "findColorSegmentGlobal: X axis is fixed, colorPoints is y determined");
-            searchX = false;
-        } else if (start.y == end.y) {
-            Log.d(TAG, "findColorSegmentGlobal: Y axis is fixed, colorPoints is x determined");
+        if(start.x == end.x) { //find vertical segment
+            Log.d(TAG, "findColorSegmentGlobal: X axis is fixed, search vertical");
             searchX = true;
+        } else if (start.y == end.y) { //find horizontal segment
+            Log.d(TAG, "findColorSegmentGlobal: Y axis is fixed, search horizontal");
+            searchX = false;
         } else {
             Log.e(TAG, "findColorSegmentGlobal: No axis is fixed, abort here.");
             return null;
@@ -501,10 +524,10 @@ public class CaptureService extends JoshGameLibrary.GLService {
                     break;
             }
         } else {
-            for(int y = 1; y < yBound; y++) {
+            for(int x = 1; x < xBound - (end.x - start.x); x++) {
                 points.clear();
 
-                for(int x = 1; x < xBound - (end.x - start.x); x++) {
+                for(int y = 1; y < yBound; y++) {
                     for(int i = 0; i < colorPoints.size(); i++) {
                         ScreenPoint pointInList = colorPoints.get(i);
                         ScreenPoint insert = new ScreenPoint();
@@ -550,9 +573,8 @@ public class CaptureService extends JoshGameLibrary.GLService {
      * sc: ScreenColor used to be compared
      * coord: ScreenCoord used to get color
      * threshold: Timeout, 1 threshold equals to 100 ms
-     * kThread: Executing thread of your task
      */
-    public int waitOnColor(ScreenColor sc, ScreenCoord coord, int threshold, Thread kThread) {
+    public int waitOnColor(ScreenColor sc, ScreenCoord coord, int threshold) throws InterruptedException {
         ScreenPoint currentPoint = new ScreenPoint();
         Log.d(TAG, "now busy waiting for ( " + coord.x  + "," + coord.y + ") turn into 0x"
                 + Integer.toHexString(sc.r & 0xFF) + Integer.toHexString(sc.g & 0xFF)
@@ -560,15 +582,12 @@ public class CaptureService extends JoshGameLibrary.GLService {
 
         while(threshold-- > 0) {
             getColorOnScreen(currentPoint.color, coord);
+            if (mChatty) Log.d(TAG, "get color " + currentPoint.color.toString());
             if (colorCompare(sc, currentPoint.color)) {
                 Log.d(TAG, "CaptureService: Matched!");
                 return 0;
             } else {
-                try {
-                    kThread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Thread.sleep(100);
 
             }
         }
@@ -576,11 +595,11 @@ public class CaptureService extends JoshGameLibrary.GLService {
         return -1;
     }
 
-    public int waitOnColor(ScreenPoint sp, int threshold, Thread kThread) {
-        return waitOnColor(sp.color, sp.coord, threshold, kThread);
+    public int waitOnColor(ScreenPoint sp, int threshold) throws InterruptedException {
+        return waitOnColor(sp.color, sp.coord, threshold);
     }
 
-    public int waitOnColorNotEqual(ScreenColor sc, ScreenCoord coord, int threshold, Thread kThread) {
+    public int waitOnColorNotEqual(ScreenColor sc, ScreenCoord coord, int threshold) throws InterruptedException {
         ScreenPoint currentPoint = new ScreenPoint();
         Log.d(TAG, "now busy waiting for ( " + coord.x  + "," + coord.y + ") is not 0x"
                 + Integer.toHexString(sc.r & 0xFF) + Integer.toHexString(sc.g & 0xFF)
@@ -592,11 +611,7 @@ public class CaptureService extends JoshGameLibrary.GLService {
                 Log.d(TAG, "CaptureService: Matched!");
                 return 0;
             } else {
-                try {
-                    kThread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Thread.sleep(100);
             }
         }
 
@@ -613,11 +628,15 @@ public class CaptureService extends JoshGameLibrary.GLService {
         return colorCompare(currentPoint.color, point.color);
     }
 
+    public int[] getCurrentAmbiguousRange() {
+        return mAmbiguousRange;
+    }
+
     public boolean colorCompare(ScreenColor src, ScreenColor dest) {
         //Log.d(TAG, "compare " + src.toString() + " with " + dest.toString());
-        return colorWithinRange(src.r, dest.r, mAmbiguousRange) &&
-                colorWithinRange(src.b, dest.b, mAmbiguousRange) &&
-                colorWithinRange(src.g, dest.g, mAmbiguousRange);
+        return colorWithinRange(src.r, dest.r, mAmbiguousRange[0]) &&
+                colorWithinRange(src.b, dest.b, mAmbiguousRange[1]) &&
+                colorWithinRange(src.g, dest.g, mAmbiguousRange[2]);
     }
 
     private boolean colorWithinRange(byte a, byte b, int range) {

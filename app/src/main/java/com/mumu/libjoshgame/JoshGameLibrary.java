@@ -21,24 +21,29 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 /*
- * Josh Game Library - Version 1.20
+ * Josh Game Library - Version 1.40
  */
 /*
- * JoshGameLibrary (GL)
- * This game control library require the following initial phase
+   JoshGameLibrary (GL)
+   This game control library require the following initial phase
 
    JoshGameLibrary mGL;
    mGL = JoshGameLibrary.getInstance();               //this make sure there will be only one instance
    mGL.setContext(this);                              //this can also be setPackageManager
    mGL.setGameOrientation(ScreenPoint.SO_Landscape);  //setting game orientation for point check
    mGL.setScreenDimension(1080, 1920);                //setting the dimension of screen for point check
+   mGL.setTouchShift(6)                               //setting the touch random shift size
 
+   Note: with version 1.30 or higher, all the waiting functions are throwing InterruptExceptions
+   Note: JoshGameLibrary support minimal SDK version of Android 7.0, if you are using Android 6.0 or below
+         you should see Josh-Tool instead.
  */
 public class JoshGameLibrary {
     private InputService mInputService;
     private CaptureService mCaptureService;
     private static Cmd mCmd;
     private static boolean mFullInitialized = false;
+    private int width, height;
 
     private static JoshGameLibrary currentRuntime = new JoshGameLibrary();
 
@@ -52,8 +57,13 @@ public class JoshGameLibrary {
     }
 
     public void setContext(Context context) {
-        mCmd = new Cmd(context.getPackageManager());
-        mFullInitialized = true;
+        if (context == null) {
+            mFullInitialized = false;
+        } else {
+            mInputService.setContext(context);
+            mCmd = new Cmd(context.getPackageManager());
+            mFullInitialized = true;
+        }
     }
 
     public void setPackageManager(PackageManager pm) {
@@ -62,6 +72,8 @@ public class JoshGameLibrary {
     }
 
     public void setScreenDimension(int w, int h) {
+        width = w;
+        height = h;
         mCaptureService.setScreenDimension(w, h);
         mInputService.setScreenDimension(w, h);
     }
@@ -71,8 +83,28 @@ public class JoshGameLibrary {
         mCaptureService.setScreenOrientation(orientation);
     }
 
-    public void setAmbiguousRange(int range) {
+    /*
+     * setScreenOffset (added in 1.34)
+     * screen offset is used for various height screen, especially for
+     * the same set of 1920*1080, 2160*1080, 2240*1080
+     * Internal service will only treat this value as portrait orientation
+     */
+    public void setScreenOffset(int xOffset, int yOffset, int offsetOrientation) {
+        if (offsetOrientation == ScreenPoint.SO_Landscape) {
+            mInputService.setScreenOffset(yOffset, xOffset);
+            mCaptureService.setScreenOffset(yOffset, xOffset);
+        } else {
+            mInputService.setScreenOffset(xOffset, yOffset);
+            mCaptureService.setScreenOffset(xOffset, yOffset);
+        }
+    }
+
+    public void setAmbiguousRange(int[] range) {
         mCaptureService.setAmbiguousRange(range);
+    }
+
+    public void setTouchShift(int ran) {
+        mInputService.setTouchShift(ran);
     }
 
     public CaptureService getCaptureService() {
@@ -83,11 +115,23 @@ public class JoshGameLibrary {
         return mInputService;
     }
 
+    public int getScreenWidth () {
+        return width;
+    }
+
+    public int getScreenHeight() {
+        return height;
+    }
+
+    /*
+     * runCommand (added in 1.40b)
+     * this function is used in this App only
+     */
     public void runCommand(String cmd) {
         if (mFullInitialized) {
             mCmd.runCommand(cmd);
         } else {
-            Log.d("JoshGameLibrary", "Command service is not initialized");
+            Log.d("LibGame", "Command service is not initialized");
         }
     }
 
@@ -99,7 +143,7 @@ public class JoshGameLibrary {
             if (mFullInitialized) {
                 mCmd.runCommand(cmd);
             } else {
-                Log.d("JoshGameLibrary", "Command service is not initialized");
+                Log.d("LibGame", "Command service is not initialized");
             }
         }
     }

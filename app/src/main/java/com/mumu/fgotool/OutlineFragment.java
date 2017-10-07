@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ import com.mumu.fgotool.screencapture.PointSelectionActivity;
 import com.mumu.fgotool.script.FGOJobHandler;
 import com.mumu.fgotool.script.JobEventListener;
 import com.mumu.fgotool.utility.Log;
+import com.mumu.libjoshgame.JoshGameLibrary;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -29,7 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class OutlineFragment extends MainFragment implements JobEventListener{
+import static android.content.Context.WINDOW_SERVICE;
+
+public class OutlineFragment extends MainFragment implements JobEventListener {
     private static final String TAG = "FGOTool";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -95,6 +101,8 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        prepareGL();
     }
 
     @Override
@@ -141,6 +149,34 @@ public class OutlineFragment extends MainFragment implements JobEventListener{
     public void onDetailClick() {
         Log.d(TAG, "Detail click on electricity fragment");
         showBottomSheet();
+    }
+
+    private void prepareGL() {
+        int w = 1080;
+        int h = 1920;
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        // we always treat the short edge as width
+        // TODO: we need to find a new way to get actual panel width and height
+        if (size.x > size.y) {
+            w = size.y;
+            if (size.x > 2000)
+                h = 2160;
+            else
+                h = size.x;
+        } else {
+            w = size.x;
+            if (size.y > 2000)
+                h = 2160;
+            else
+                h = size.y;
+        }
+
+        JoshGameLibrary.getInstance().setScreenDimension(w, h);
     }
 
     private void prepareView(View view) {

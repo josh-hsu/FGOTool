@@ -94,7 +94,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
     private void restoreCurrentAccount() throws Exception {
         if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex >= 0) {
             String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
-            Log.d(TAG, "Now restoring account record: " + thisAccount);
+            Log.d(TAG, "復原帳號: " + thisAccount);
             sendMessage("" + (mCurrentIndex + 1) + " / " + mAccountHandler.getCount() + " :" + mAccountHandler.get(mCurrentIndex).title);
             mPPM.moveData("com.aniplex.fategrandorder", "restore:com.mumu.fgotool/files/" + thisAccount);
         }
@@ -104,7 +104,7 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         if (mCurrentIndex < mAccountHandler.getCount() && mCurrentIndex >= 0) {
             String thisAccount = mAccountHandler.getRecord(mCurrentIndex);
             Log.d(TAG, "Now backup account prefs: " + thisAccount);
-            sendMessage("Now backing up prefs .. ");
+            sendMessage("備份現有資料中 ");
             mPPM.moveData("com.aniplex.fategrandorder", "backupPref:com.mumu.fgotool/files/" + thisAccount);
         }
     }
@@ -119,21 +119,36 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
         ScreenCoord pointCloseDialog = new ScreenCoord(238, 968, ScreenPoint.SO_Portrait);
         */
         /* for 1080x2160 */
-        ScreenPoint pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
-        ScreenPoint pointExitBulletin = new ScreenPoint(10,35,51,0xff,1879,75,ScreenPoint.SO_Landscape);
-        ScreenPoint pointHomeApAdd = new ScreenPoint(230,220,150,0xff,304,1033,ScreenPoint.SO_Landscape);
-        ScreenPoint pointCloseDialog = new ScreenPoint(0,0,0,0xff,647,833,ScreenPoint.SO_Landscape);
+        ScreenPoint pointScreenCenter, pointExitBulletin, pointHomeApAdd, pointCloseDialog;
+
+        private void assignResolution() {
+            int w = JoshGameLibrary.getInstance().getScreenWidth();
+            int h = JoshGameLibrary.getInstance().getScreenHeight();
+
+            if (w == 1080 && h == 2160) {
+                pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
+                pointExitBulletin = new ScreenPoint(10,35,51,0xff,1879,75,ScreenPoint.SO_Landscape);
+                pointHomeApAdd = new ScreenPoint(230,220,150,0xff,304,1033,ScreenPoint.SO_Landscape);
+                pointCloseDialog = new ScreenPoint(0,0,0,0xff,647,833,ScreenPoint.SO_Landscape);
+            } else {
+                pointScreenCenter = new ScreenPoint(0,0,0,0,500,1090,ScreenPoint.SO_Portrait);
+                pointExitBulletin = new ScreenPoint(0xB,0x24,0x34,0xff,1033,1841,ScreenPoint.SO_Portrait);
+                pointHomeApAdd = new ScreenPoint(201,142,85,0xff,262,1049,ScreenPoint.SO_Landscape);
+                pointCloseDialog = new ScreenPoint(0,0,0,0xff, 238, 968, ScreenPoint.SO_Portrait);
+            }
+        }
 
         private void main() throws Exception {
             boolean shouldRunning = true;
             mCurrentIndex = 0;
             stopFGO();
+            assignResolution();
 
             while (shouldRunning) {
                 restoreCurrentAccount();
                 sleep(1000);
                 startFGO();
-                sleep(40000);
+                sleep(16000); //for SDM660, loading FGO to start menu need 16 seconds
                 while (!mGL.getCaptureService().colorIs(pointHomeApAdd) && !mGL.getCaptureService().colorIs(pointExitBulletin)) {
                     mGL.getInputService().tapOnScreen(pointScreenCenter.coord);
                     sleep(500);
@@ -152,8 +167,10 @@ class AutoTraverseJob extends FGOJobHandler.FGOJob {
                 sleep(1000);
 
                 mCurrentIndex++;
-                if (mCurrentIndex >= mAccountHandler.getCount())
+                if (mCurrentIndex >= mAccountHandler.getCount()) {
                     shouldRunning = false;
+                    sendMessage("已經完成全部登入");
+                }
             }
         }
 

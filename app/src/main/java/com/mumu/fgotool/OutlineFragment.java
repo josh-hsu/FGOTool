@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -152,13 +153,14 @@ public class OutlineFragment extends MainFragment implements JobEventListener {
     }
 
     private void prepareGL() {
-        int w = 1080;
-        int h = 1920;
+        int w, h;
 
         WindowManager wm = (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
+
+        Log.d(TAG, "Display size = " + size.toString());
 
         // we always treat the short edge as width
         // TODO: we need to find a new way to get actual panel width and height
@@ -219,6 +221,7 @@ public class OutlineFragment extends MainFragment implements JobEventListener {
                         .show();
             }
         });
+        mRemoveAccountButton.setBackgroundColor(Color.RED);
 
         mInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
